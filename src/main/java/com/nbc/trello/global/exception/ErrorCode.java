@@ -8,7 +8,7 @@ public enum ErrorCode {
     // 유저
     INVALID_NICKNAME_PASSWORD(400, "닉네임 또는 패스워드를 확인해주세요."),
 
-    ;
+    INTERNAL_SERVER_ERROR(500, "서버 에러.");
 
     private final Integer status;
     private final String message;
