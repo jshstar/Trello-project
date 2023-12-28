@@ -22,6 +22,7 @@ import com.nbc.trello.card.dto.request.CardUpdateRequestDto;
 import com.nbc.trello.card.dto.response.GetCardResponseDto;
 import com.nbc.trello.card.dto.response.MoveCardResponseDto;
 import com.nbc.trello.card.dto.response.PageCardResponseDto;
+import com.nbc.trello.card.dto.response.UpdateCardResponseDto;
 import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.columns.entity.Columns;
 import com.nbc.trello.columns.repository.ColumnsRepository;
@@ -55,13 +56,14 @@ public class CardService {
 	}
 
 	@Transactional
-	public void updateCard(Long boardId, Long columnId, Long cardId, CardUpdateRequestDto cardUpdateRequestDto,
+	public UpdateCardResponseDto updateCard(Long boardId, Long columnId, Long cardId, CardUpdateRequestDto cardUpdateRequestDto,
 		User user) {
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		boardUserCheck(board, user); // board
 		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		Card card = cardRepository.findById(cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		card.updateCard(cardUpdateRequestDto, columns);
+		return new UpdateCardResponseDto(card);
 	}
 
 	// 카드 페이징 조회
@@ -95,14 +97,14 @@ public class CardService {
 
 	// 카드 칼럼 이동
 	@Transactional
-	public MoveCardResponseDto moveCardToColumn(Long boardId, Long columnId, Long cardId, Long moveCardId, Long columnedId, User user) {
+	public MoveCardResponseDto moveCardToColumn(Long boardId, Long columnId, Long cardId, Long moveColumnId, Long moveCardId, User user) {
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		boardUserCheck(board, user);
-		List<Card> cardList = cardRepository.findWeightCardList(columnedId);
+		List<Card> cardList = cardRepository.findWeightCardList(moveColumnId);
 		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 
 		if (cardList.isEmpty()) {
-			Columns columns = columnsRepository.findById(columnedId).orElseThrow(() -> new ApiException(INVALID_CARD));
+			Columns columns = columnsRepository.findById(moveColumnId).orElseThrow(() -> new ApiException(INVALID_CARD));
 			card.moveColumn(columns);
 			card.updateCardWeight(columns.increaseMaxWeight());
 		} else {
