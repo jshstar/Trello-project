@@ -19,13 +19,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
-    // adminToken
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
-
-
-    public void signup(UserInfoRequestDTO infoRequestDTO) {
-        String username = infoRequestDTO.getUsername();
-        String password = passwordEncoder.encode(infoRequestDTO.getPassword());
+    public void signup(UserRequestDTO request) {
+        String username = request.getUsername();
+        String password = passwordEncoder.encode(request.getPassword());
 
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("이미 존재하는 유저 입니다");
@@ -34,20 +30,6 @@ public class UserService {
         User user = new User(username, password);
         userRepository.save(user);
     }
-
-
-    public void login(UserRequestDTO requestDTO, HttpServletResponse response) {
-        String username = requestDTO.getUsername();
-        String password = requestDTO.getPassword();
-
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저"));
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호 불일치");
-        }
-        response.setHeader(JwtUtil.AUTH_HEADER, jwtUtil.createToken(requestDTO.getUsername()));
-    }
-
 
     @Transactional
     public void modifyUserPassword(UserPWModifyRequestDTO requestDTO, User user) {

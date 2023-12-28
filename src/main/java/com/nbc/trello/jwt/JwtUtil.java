@@ -22,13 +22,9 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     public static final String AUTH_HEADER = "Authorization";
-    public static final String AUTH_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    public static final String REFRESH_HEADER = "RefreshToken";
-    public static final String REFRESH_KEY = "refresh";
 
     private final long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24;  // 24시간
-    private final long REFRESH_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24 * 7;  // 7일
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -49,7 +45,6 @@ public class JwtUtil {
 
             return BEARER_PREFIX +
                     Jwts.builder()
-                            .claim(AUTH_KEY,"ROLE_USER")
                             .setSubject(username) // 사용자 식별자값(ID)
                             .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRATION)) // 만료 시간  1일
                             .setIssuedAt(date)
@@ -62,33 +57,6 @@ public class JwtUtil {
         try {
             token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
             Cookie cookie = new Cookie(AUTH_HEADER, token);
-            cookie.setPath("/");
-
-            res.addCookie(cookie);
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    // 리프레시 토큰 생성
-    public String createRefreshToken(String username) {
-        Date date = new Date();
-
-            return BEARER_PREFIX +
-                    Jwts.builder()
-                            .claim(AUTH_KEY,"ROLE_USER")
-                            .setSubject(username) // 사용자 식별자값(ID)
-                            .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION)) // 만료 시간  7일
-                            .setIssuedAt(date)
-                            .signWith(key, signatureAlgorithm)
-                            .compact();
-    }
-
-    // 리프레시토큰  쿠키에 저장
-    public void addRefreshTokenToCookie(String refToken, HttpServletResponse res) {
-        try {
-            refToken = URLEncoder.encode(refToken, "utf-8").replaceAll("\\+", "%20");
-            Cookie cookie = new Cookie(REFRESH_HEADER, refToken);
             cookie.setPath("/");
 
             res.addCookie(cookie);
@@ -128,9 +96,12 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-    public String getUserInfoFromTokenByString(String token) {
-        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        return claims.getSubject();
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
+        }
+        logger.error("Not Found Token");
+        throw new NullPointerException("Not Found Token");
     }
 
     public String getTokenFromRequest(HttpServletRequest req) {

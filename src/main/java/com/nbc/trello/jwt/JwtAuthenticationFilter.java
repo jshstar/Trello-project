@@ -18,17 +18,18 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
-
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/");
+        setFilterProcessesUrl("/users/login");
     }
 
     @Override
-    public Authentication attemptAuthentication (
+    public Authentication attemptAuthentication(
             HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            UserRequestDTO requestDto = new ObjectMapper().readValue(request.getInputStream(), UserRequestDTO.class);
+            UserRequestDTO requestDto =
+                    objectMapper.readValue(request.getInputStream(), UserRequestDTO.class);
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -47,27 +48,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // 인증완료시 액세스토큰, 리프레시토큰 생성
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain chain, Authentication authen)
+                                            FilterChain chain, Authentication auth)
             throws IOException, ServletException {
 
-        String username = ((UserDetailsImpl) authen.getPrincipal()).getUsername();
-
+        String username = ((UserDetailsImpl) auth.getPrincipal()).getUsername();
 
         String accessToken = jwtUtil.createToken(username);
         jwtUtil.addAccessTokenToCookie(accessToken, response);
 
-        String refToken = jwtUtil.createRefreshToken(username);
-        jwtUtil.addRefreshTokenToCookie(refToken, response);
-
-        response.setHeader(JwtUtil.AUTH_HEADER,accessToken);
-        System.out.println("success");
+        response.setHeader(JwtUtil.AUTH_HEADER, accessToken);
     }
 
     @Override
-    protected void unsuccessfulAuthentication (HttpServletRequest request, HttpServletResponse response,
-                                               AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(401);
     }
-
-
 }

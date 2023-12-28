@@ -11,15 +11,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
     Boolean existsByUsername(String username);
-
-    // id 자동증가 값 초기화
-    @Transactional
-    @Modifying
-    @Query(
-            value = "ALTER TABLE user AUTO_INCREMENT=1 " +
-                    "SET @count = 1 " +
-                    "UPDATE user SET id = @count\\:=@count+1",
-            nativeQuery = true
-    )
-    void resetId();
 }

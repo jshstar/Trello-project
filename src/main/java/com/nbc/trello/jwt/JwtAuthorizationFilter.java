@@ -2,7 +2,7 @@ package com.nbc.trello.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbc.trello.global.dto.ApiResponse;
-import com.nbc.trello.users.UserDetailsService;
+import com.nbc.trello.users.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,15 +27,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = jwtUtil.resolveToken(request);
+        String token = jwtUtil.getTokenFromRequest(request);
 
         if(Objects.nonNull(token)){
+            token = jwtUtil.substringToken(token);
             if(jwtUtil.validateToken(token)){
                 Claims info = jwtUtil.getUserInfoFromToken(token);
                 // 인증에 유저정보(username) 넣기
@@ -44,7 +45,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String username = info.getSubject();
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 // userDetails에 저장
-                UserDetails userDetails = userDetailsService.getUserDetails(username);
+                UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
                 // authentication의 principal에 저장
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 // 저장한 내용을 securityContent에 저장
@@ -64,11 +65,4 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-    // 인증 객체 생성
-    private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.getUserDetails(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-    }
-
 }
