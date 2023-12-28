@@ -1,4 +1,4 @@
-package com.nbc.trello.user;
+package com.nbc.trello.users;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

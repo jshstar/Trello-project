@@ -1,12 +1,10 @@
-package com.nbc.trello.user;
+package com.nbc.trello.users;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "user")
@@ -21,22 +19,22 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
-
     @Column
     private String pastPassword;
 
 
-
-    public User(String username, String password, UserRoleEnum role){
+    public User(String username, String password){
         this.username = username;
         this.password = password;
 
-        this.role = role;
     }
 
 
+    public void setPastPassword(String password) {
+        this.password=password;
+    }
+
+    public void setPassword(String afterPassword) {
+        this.password=afterPassword;
+    }
 }

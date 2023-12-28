@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbc.trello.jwt.JwtAuthenticationFilter;
 import com.nbc.trello.jwt.JwtAuthorizationFilter;
 import com.nbc.trello.jwt.JwtUtil;
-import com.nbc.trello.user.UserDetailsService;
+import com.nbc.trello.users.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

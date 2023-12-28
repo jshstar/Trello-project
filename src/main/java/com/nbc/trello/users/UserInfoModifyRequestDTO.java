@@ -1,4 +1,4 @@
-package com.nbc.trello.user;
+package com.nbc.trello.users;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -7,6 +7,4 @@ import lombok.Getter;
 public class UserInfoModifyRequestDTO {
     @Pattern(regexp = "^[a-z0-9]{4,10}$")
     private String username;
-    private String email;
-    private String introduce;
 }

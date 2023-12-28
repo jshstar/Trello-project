@@ -1,8 +1,8 @@
 package com.nbc.trello.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nbc.trello.CommonResponseDTO;
-import com.nbc.trello.user.UserDetailsService;
+import com.nbc.trello.global.dto.ApiResponse;
+import com.nbc.trello.users.UserDetailsService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,10 +54,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 // 위 작업으로 인해 @AuthenticationPrincipal로 조회 가능
             } else {
                 // 인증 토큰 없을떄
-                CommonResponseDTO commonResponseDto = new CommonResponseDTO("토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST.value());
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.setContentType("application/json; charset=UTF-8");
-                response.getWriter().write(objectMapper.writeValueAsString(commonResponseDto));
+                response.getWriter().write(objectMapper.writeValueAsString(
+                        ApiResponse.of(HttpStatus.BAD_REQUEST.value(),"토큰이 유효하지 않습니다.",null)));
                 return;
             }
         }

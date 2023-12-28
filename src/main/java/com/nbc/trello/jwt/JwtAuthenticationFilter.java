@@ -1,9 +1,8 @@
 package com.nbc.trello.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nbc.trello.user.UserDetailsImpl;
-import com.nbc.trello.user.UserRequestDTO;
-import com.nbc.trello.user.UserRoleEnum;
+import com.nbc.trello.users.UserDetailsImpl;
+import com.nbc.trello.users.UserRequestDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,12 +51,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws IOException, ServletException {
 
         String username = ((UserDetailsImpl) authen.getPrincipal()).getUsername();
-        UserRoleEnum role = ((UserDetailsImpl) authen.getPrincipal()).getUser().getRole();
 
-        String accessToken = jwtUtil.createToken(username, role);
+
+        String accessToken = jwtUtil.createToken(username);
         jwtUtil.addAccessTokenToCookie(accessToken, response);
 
-        String refToken = jwtUtil.createRefreshToken(username, role);
+        String refToken = jwtUtil.createRefreshToken(username);
         jwtUtil.addRefreshTokenToCookie(refToken, response);
 
         response.setHeader(JwtUtil.AUTH_HEADER,accessToken);

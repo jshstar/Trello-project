@@ -1,4 +1,4 @@
-package com.nbc.trello.user;
+package com.nbc.trello.users;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;

@@ -1,6 +1,5 @@
 package com.nbc.trello.jwt;
 
-import com.nbc.trello.user.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -45,19 +44,9 @@ public class JwtUtil {
     }
 
     // 액세스 토큰 생성
-    public String createToken(String username, UserRoleEnum role) {
+    public String createToken(String username) {
         Date date = new Date();
 
-        if (role == UserRoleEnum.ROLE_ADMIN)
-            return BEARER_PREFIX +
-                    Jwts.builder()
-                            .claim(AUTH_KEY,"ROLE_ADMIN")
-                            .setSubject(username) // 사용자 식별자값(ID)
-                            .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRATION)) // 만료 시간  1일
-                            .setIssuedAt(date)
-                            .signWith(key, signatureAlgorithm)
-                            .compact();
-        else
             return BEARER_PREFIX +
                     Jwts.builder()
                             .claim(AUTH_KEY,"ROLE_USER")
@@ -82,19 +71,9 @@ public class JwtUtil {
     }
 
     // 리프레시 토큰 생성
-    public String createRefreshToken(String username, UserRoleEnum role) {
+    public String createRefreshToken(String username) {
         Date date = new Date();
 
-        if (role == UserRoleEnum.ROLE_ADMIN)
-            return BEARER_PREFIX +
-                    Jwts.builder()
-                            .claim(AUTH_KEY,"ROLE_ADMIN")
-                            .setSubject(username) // 사용자 식별자값(ID)
-                            .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION)) // 만료 시간  7일
-                            .setIssuedAt(date)
-                            .signWith(key, signatureAlgorithm)
-                            .compact();
-        else
             return BEARER_PREFIX +
                     Jwts.builder()
                             .claim(AUTH_KEY,"ROLE_USER")

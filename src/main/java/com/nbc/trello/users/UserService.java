@@ -1,4 +1,4 @@
-package com.nbc.trello.user;
+package com.nbc.trello.users;
 
 import com.nbc.trello.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,13 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
-    private final RestTemplate restTemplate;
+
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
@@ -24,21 +23,13 @@ public class UserService {
         String username = infoRequestDTO.getUsername();
         String password = passwordEncoder.encode(infoRequestDTO.getPassword());
 
-        UserRoleEnum role = UserRoleEnum.ROLE_USER;
 
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 유저 입니다");
         }
 
-        if (infoRequestDTO.isAdmin()) {
-            if (!ADMIN_TOKEN.equals(infoRequestDTO.getAdminToken())) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
-            }
-            role = UserRoleEnum.ROLE_ADMIN;
-        }
+        User user = new User(username, password);
 
-        User user = new User(username, password, role);
-        //userRepository.resetId();
         userRepository.save(user);
     }
 
@@ -52,7 +43,7 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호 불일치");
         }
-        response.setHeader(JwtUtil.AUTH_HEADER, jwtUtil.createToken(requestDTO.getUsername(), user.getRole()));
+        response.setHeader(JwtUtil.AUTH_HEADER, jwtUtil.createToken(requestDTO.getUsername()));
     }
 
 
