@@ -11,7 +11,4 @@ public class UserInfoRequestDTO extends UserRequestDTO{
     private String username;
     @Pattern(regexp = "^[a-zA-Z0-9]{8,15}$")
     private String password;
-
-    /*private boolean admin = false;
-    private String adminToken = "";*/
 }

@@ -1,11 +1,14 @@
 package com.nbc.trello.users;
 
+import com.nbc.trello.global.exception.ApiException;
+import com.nbc.trello.global.exception.ErrorCode;
 import com.nbc.trello.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -19,17 +22,16 @@ public class UserService {
     // adminToken
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
+
     public void signup(UserInfoRequestDTO infoRequestDTO) {
         String username = infoRequestDTO.getUsername();
         String password = passwordEncoder.encode(infoRequestDTO.getPassword());
 
-
-        if (userRepository.findByUsername(username).isPresent()) {
+        if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("이미 존재하는 유저 입니다");
         }
 
         User user = new User(username, password);
-
         userRepository.save(user);
     }
 
@@ -47,39 +49,20 @@ public class UserService {
     }
 
 
-
+    @Transactional
     public void modifyUserPassword(UserPWModifyRequestDTO requestDTO, User user) {
+        User savedUser = userRepository.save(user);
         String beforePassword = requestDTO.getBeforePassword();
         String afterPassword = requestDTO.getAfterPassword();
-        String[] past;
-
-        try {
-            past = user.getPastPassword().split(" ");
-        } catch (NullPointerException e) {
-            past = new String[0];
+        if (!beforePassword.equals(afterPassword)) {
+            throw new ApiException(ErrorCode.EQUAL_PASSWORD);
         }
 
         if (!passwordEncoder.matches(beforePassword, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호 불일치");
         } else {
-            for(int i = 0; i < past.length; i++){
-                if(passwordEncoder.matches(afterPassword, past[i])){
-                    throw new IllegalArgumentException("최근 3번안에 사용한 비밀번호는 사용할 수 없습니다.");
-                }
-            }
-            afterPassword = passwordEncoder.encode(afterPassword);
-            if(past.length == 0){
-                user.setPastPassword(user.getPassword());
-            } else if(past.length > 2){
-                String str = user.getPastPassword().substring(past[0].length() + 1);
-                str += " " + user.getPassword();
-                user.setPastPassword(str);
-            } else {
-                user.setPastPassword(user.getPastPassword() + " " + user.getPassword());
-            }
-            user.setPassword(afterPassword);
+            savedUser.setPassword(afterPassword);
         }
-        userRepository.save(user);
     }
 
 }

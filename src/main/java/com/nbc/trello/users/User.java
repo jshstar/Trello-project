@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,16 +20,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column
-    private String pastPassword;
-
-
     public User(String username, String password){
         this.username = username;
         this.password = password;
-
     }
-
 
     public void setPastPassword(String password) {
         this.password=password;
