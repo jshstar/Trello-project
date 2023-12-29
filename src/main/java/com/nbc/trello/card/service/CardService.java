@@ -45,7 +45,7 @@ public class CardService {
 		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		Double maxWeight = findMaxWeightAndCheckNull(columnId)+1.0;
 		Card card = new Card(cardRequestDto, maxWeight); // columns
-		// solution : 케스케이드 설정이 돼있기 때문에 worker를 만들어 등록만 시켜주면 알아서 영속성이 끝나기전에 임시로 받은 ID값이 worker로 들어가 저장된다.
+		card.addColumn(columns);
 		card.createWorker(user);
 		Card saveCard = cardRepository.save(card);
 		return new CardResponseDto(saveCard);
