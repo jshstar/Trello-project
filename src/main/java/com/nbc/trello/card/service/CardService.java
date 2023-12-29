@@ -23,6 +23,9 @@ import com.nbc.trello.card.dto.response.PageCardResponseDto;
 import com.nbc.trello.card.dto.response.UpdateCardResponseDto;
 import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.global.exception.ApiException;
+import com.nbc.trello.worker.entity.Worker;
+import com.nbc.trello.worker.entity.WorkerID;
+import com.nbc.trello.worker.repository.WorkerRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +40,10 @@ public class CardService {
 	private final ColumnsRepository columnsRepository; //columnsService 변경 예정
 
 	private final UserRepository userRepository; // userService 변경예정
+
+	private final WorkerRepository workerRepository;
+
+
 
 	@Transactional
 	public CardResponseDto createCard(Long boardId, Long columnId, CardRequestDto cardRequestDto, User user) {
@@ -113,6 +120,8 @@ public class CardService {
 		boardUserCheck(board, inviteUser);
 
 		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
+		checkWorker(card, inviteUser);
+
 		card.createWorker(inviteUser);
 	}
 
@@ -161,6 +170,16 @@ public class CardService {
 		}
 		card.updateCardWeight(calculateWeight);
 		return card;
+	}
+
+	// 작업자 명단에 초대한 유저가 있는지 확인
+	public void checkWorker(Card card, User user){
+		boolean userWorkerFlag = workerRepository.existsByCardIdAndUserId(card.getId(), user.getId());
+		if(!userWorkerFlag){
+			card.createWorker(user);
+		} else {
+			throw new ApiException(ALREADY_INVITE_USER);
+		}
 	}
 
 
