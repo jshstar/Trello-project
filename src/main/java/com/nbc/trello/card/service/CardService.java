@@ -11,14 +11,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nbc.trello.User.entity.User;
 import com.nbc.trello.User.repository.UserRepository;
 import com.nbc.trello.board.entity.Board;
 import com.nbc.trello.board.repository.BoardRepository;
 import com.nbc.trello.card.Repository.CardRepository;
 import com.nbc.trello.card.dto.request.CardRequestDto;
-import com.nbc.trello.card.dto.response.CardResponseDto;
 import com.nbc.trello.card.dto.request.CardUpdateRequestDto;
+import com.nbc.trello.card.dto.response.CardResponseDto;
 import com.nbc.trello.card.dto.response.GetCardResponseDto;
 import com.nbc.trello.card.dto.response.MoveCardResponseDto;
 import com.nbc.trello.card.dto.response.PageCardResponseDto;
@@ -27,7 +26,7 @@ import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.columns.entity.Columns;
 import com.nbc.trello.columns.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
-import com.nbc.trello.worker.repository.WorkerRepository;
+import com.nbc.trello.users.User;
 
 import lombok.RequiredArgsConstructor;
 

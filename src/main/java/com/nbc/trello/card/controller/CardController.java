@@ -22,6 +22,7 @@ import com.nbc.trello.card.dto.response.PageCardResponseDto;
 import com.nbc.trello.card.dto.response.UpdateCardResponseDto;
 import com.nbc.trello.card.service.CardService;
 import com.nbc.trello.global.dto.ApiResponse;
+import com.nbc.trello.users.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 
