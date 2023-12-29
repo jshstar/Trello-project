@@ -179,6 +179,11 @@ public class CardService {
 		}
 	}
 
+	public Card findCard(Long cardId){
+		return cardRepository.findById(cardId).orElseThrow(
+			() -> new ApiException(INVALID_CARD));
+	}
+
 
 	public Double findMaxWeightAndCheckNull(Long columnId){
 		return cardRepository.findMaxWeightByColumnsID(columnId).orElse(1.0);
