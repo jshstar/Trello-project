@@ -3,8 +3,6 @@ package com.nbc.trello.card.service;
 import static com.nbc.trello.global.exception.ErrorCode.*;
 
 import java.util.List;
-import java.util.Objects;
-
 import org.hibernate.annotations.Columns;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +43,7 @@ public class CardService {
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		boardUserCheck(board, user);
 		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
-		Double maxWeight = findMaxWeightAndCheckNull(columnId);
+		Double maxWeight = findMaxWeightAndCheckNull(columnId)+1.0;
 		Card card = new Card(cardRequestDto, maxWeight); // columns
 		// solution : 케스케이드 설정이 돼있기 때문에 worker를 만들어 등록만 시켜주면 알아서 영속성이 끝나기전에 임시로 받은 ID값이 worker로 들어가 저장된다.
 		card.createWorker(user);
@@ -132,7 +130,7 @@ public class CardService {
 			card.updateCardWeight(1.0);
 		} else {
 			Columns moveColumn = cardList.get(0).getColumns();
-			card = calculateWeightMoveCard(card, moveCardRequestDto, cardList);
+			card = calculateWeightMoveCard(card, moveCardRequestDto.getCardPosition() , cardList);
 			card.addColumn(moveColumn);
 		}
 		return card;
@@ -141,20 +139,25 @@ public class CardService {
 
 
 	// 옮기려는 카드, 옮길 카드 위치
-	private Card calculateWeightMoveCard(Card card, MoveCardRequestDto moveCardRequestDto, List<Card> cardList) {
+	private Card calculateWeightMoveCard(Card card, Long moveCardPosition, List<Card> cardList) {
 		// cardList값이 있는데 첫번째 칸에 들어가는 경우
 		double calculateWeight = 0;
-		Long moveCardPosition = moveCardRequestDto.getCardPosition();
-		Long moveColumnPosition = moveCardRequestDto.getColumnsPosition();
+
 		if (moveCardPosition == 1) { // 옮기려는 카드 위치가 첫번째 일때
+
 			Card nextCard = cardList.get(0);
 			calculateWeight = nextCard.getWeight() / 2;
+
 		} else if (moveCardPosition >= cardList.size()) { // 옮기려는 카드 위치가 마지막 일때
-			Double moveColumnMaxWeight = findMaxWeightAndCheckNull(moveColumnPosition);
-			calculateWeight = (cardList.get(cardList.size() - 1).getWeight() + moveColumnMaxWeight + 1) / 2;
+
+			Double moveColumnMaxWeight = cardList.get(cardList.size() - 1).getWeight();
+			calculateWeight = moveColumnMaxWeight+1;
+
 		} else { // 그 외 경우
+
 			calculateWeight = (cardList.get(moveCardPosition.intValue() - 1).getWeight()
 				+ cardList.get(moveCardPosition.intValue() + 1).getWeight()) / 2;
+
 		}
 		card.updateCardWeight(calculateWeight);
 		return card;
