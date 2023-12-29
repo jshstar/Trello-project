@@ -1,6 +1,8 @@
 package com.nbc.trello.comment;
 
+import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.global.entity.BaseEntity;
+import com.nbc.trello.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -20,4 +22,14 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "card_id", nullable = false)
     private Card card;
+
+    public Comment(User user, Card card, String content){
+        this.user = user;
+        this.card = card;
+        this.content = content;
+    }
+
+    public void update(String content){
+        this.content = content;
+    }
 }
