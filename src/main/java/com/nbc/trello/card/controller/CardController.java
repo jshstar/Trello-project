@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nbc.trello.card.dto.request.CardRequestDto;
 import com.nbc.trello.card.dto.request.CardUpdateRequestDto;
+import com.nbc.trello.card.dto.request.InviteUserRequestDto;
+import com.nbc.trello.card.dto.request.MoveCardRequestDto;
 import com.nbc.trello.card.dto.response.CardResponseDto;
 import com.nbc.trello.card.dto.response.GetCardResponseDto;
 import com.nbc.trello.card.dto.response.MoveCardResponseDto;
@@ -22,7 +24,6 @@ import com.nbc.trello.card.dto.response.PageCardResponseDto;
 import com.nbc.trello.card.dto.response.UpdateCardResponseDto;
 import com.nbc.trello.card.service.CardService;
 import com.nbc.trello.global.dto.ApiResponse;
-import com.nbc.trello.users.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,9 +36,9 @@ public class CardController {
 
 	@PostMapping("/{boardId}/columns/{columnId}/cards")
 	public ResponseEntity<ApiResponse<CardResponseDto>> createCard(@PathVariable Long boardId,
-										@PathVariable Long columnId,
-										@RequestBody CardRequestDto cardRequestDto,
-										@AuthenticationPrincipal UserDetailsImpl userDetails){
+		@PathVariable Long columnId,
+		@RequestBody CardRequestDto cardRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails){
 		CardResponseDto cardResponseDto = cardService.createCard(boardId, columnId, cardRequestDto, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(ApiResponse.of(HttpStatus.CREATED.value(),"카드 생성 성공", cardResponseDto));
@@ -46,10 +47,10 @@ public class CardController {
 	// 카드 업데이트
 	@PutMapping("/{boardId}/columns/{columnId}/cards/{cardId}")
 	public ResponseEntity<ApiResponse<UpdateCardResponseDto>> updateCard(@PathVariable Long boardId,
-									@PathVariable Long columnId,
-									@PathVariable Long cardId,
-									@RequestBody CardUpdateRequestDto cardUpdateRequestDto,
-									@AuthenticationPrincipal UserDetailsImpl userDetails){
+		@PathVariable Long columnId,
+		@PathVariable Long cardId,
+		@RequestBody CardUpdateRequestDto cardUpdateRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails){
 		UpdateCardResponseDto updateCardResponseDto = cardService.updateCard(boardId, columnId, cardId, cardUpdateRequestDto, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(ApiResponse.of(HttpStatus.OK.value(),"카드 업데이트 성공", updateCardResponseDto));
@@ -58,10 +59,10 @@ public class CardController {
 	// 카드 페이징 조회
 	@GetMapping("/{boardID}/columns/{columnId}/cards")
 	public ResponseEntity<ApiResponse<PageCardResponseDto>> getPageCard(@PathVariable Long boardID,
-										@PathVariable Long columnId,
-										Pageable pageable,
-										@AuthenticationPrincipal UserDetailsImpl userDetails
-										){
+		@PathVariable Long columnId,
+		Pageable pageable,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	){
 		PageCardResponseDto pageCardResponseDto = cardService.getPageCard(boardID, columnId, pageable, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(ApiResponse.of(HttpStatus.OK.value(),"카드 페이징 조회 성공", pageCardResponseDto));;
@@ -70,10 +71,10 @@ public class CardController {
 	// 카드 단건조회
 	@GetMapping("/{boardID}/columns/{columnId}/cards/{cardId}")
 	public ResponseEntity<ApiResponse<GetCardResponseDto>> getCard(@PathVariable Long boardID,
-										@PathVariable Long columnId,
-										@PathVariable Long cardId,
-										@AuthenticationPrincipal UserDetailsImpl userDetails
-										){
+		@PathVariable Long columnId,
+		@PathVariable Long cardId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	){
 		GetCardResponseDto getCardResponseDto = cardService.getCard(boardID, columnId, cardId, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(ApiResponse.of(HttpStatus.OK.value(),"카드 조회 성공", getCardResponseDto));
@@ -82,48 +83,35 @@ public class CardController {
 	// 삭제처리
 	@DeleteMapping("/{boardId}/columns/{columnId}/cards/{cardId}")
 	public ResponseEntity<ApiResponse<Void>> deleteCard(@PathVariable Long boardId,
-										@PathVariable Long columnId,
-										@PathVariable Long cardId,
-										@AuthenticationPrincipal UserDetailsImpl userDetails){
+		@PathVariable Long columnId,
+		@PathVariable Long cardId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails){
 		cardService.deleteCard(boardId, columnId, cardId, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(ApiResponse.of(HttpStatus.OK.value(),"카드 삭제 성공",null));
 	}
 
-	// 칼럼 이동
-	@PostMapping("/{boardId}/columns/{columnId}/cards/{cardId}/moveColumn/{moveColumnId}/moveCard/{moveCardId}")
+	// 칼럼 카드 이동
+	@PostMapping("/{boardId}/columns/{columnId}/cards/{cardId}/move")
 	public ResponseEntity<ApiResponse<MoveCardResponseDto>> moveCardToColumn(@PathVariable Long boardId,
-											@PathVariable Long columnId,
-											@PathVariable Long cardId,
-											@PathVariable Long moveColumnId,
-											@PathVariable Long moveCardId,
-											@AuthenticationPrincipal UserDetailsImpl userDetails){
+		@PathVariable Long columnId,
+		@PathVariable Long cardId,
+		@RequestBody MoveCardRequestDto moveCardRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		MoveCardResponseDto moveCardResponseDto =
-			cardService.moveCardToColumn(boardId, columnId, cardId, moveColumnId,moveCardId, userDetails.getUser());
+			cardService.moveCard(boardId, columnId, cardId, moveCardRequestDto, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(ApiResponse.of(HttpStatus.OK.value(),"칼럼 이동 성공",moveCardResponseDto));
-	}
-	@PostMapping("/{boardId}/columns/{columnId}/cards/{cardId}/move/{moveCardId}")
-	public ResponseEntity<ApiResponse<MoveCardResponseDto>> moveCard(@PathVariable Long boardId,
-		 															 @PathVariable Long columnId,
-		  															 @PathVariable Long cardId,
-		  															 @PathVariable Long moveCardId,
-		 															 @AuthenticationPrincipal UserDetailsImpl userDetails){
-		MoveCardResponseDto moveCardResponseDto =
-			cardService.moveCard(boardId, columnId, cardId, moveCardId, userDetails.getUser());
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(ApiResponse.of(HttpStatus.OK.value(), "카드 이동 성공",moveCardResponseDto));
-
+			.body(ApiResponse.of(HttpStatus.OK.value(), "카드 이동 성공", moveCardResponseDto));
 	}
 
-	// 작업자 지정
-	@PostMapping("/{boardId}/columns/{columnId}/cards/{cardId}/worker/{userId}")
+	// 작업자 지정 //(body username)
+	@PostMapping("/{boardId}/columns/{columnId}/cards/{cardId}/invite")
 	public ResponseEntity<ApiResponse<Void>> createWorkerCard(@PathVariable Long boardId,
-											@PathVariable Long columnId,
-											@PathVariable Long cardId,
-											@PathVariable Long userId,
-											@AuthenticationPrincipal UserDetailsImpl userDetails){
-		cardService.inviteWorkerToCard(boardId, columnId, cardId, userId, userDetails.getUser());
+		@PathVariable Long columnId,
+		@PathVariable Long cardId,
+		@RequestBody InviteUserRequestDto inviteUserRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails){
+		cardService.inviteWorkerToCard(boardId, columnId, cardId, inviteUserRequestDto, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(ApiResponse.of(HttpStatus.OK.value(), "작업자 초대 성공", null));
 	}

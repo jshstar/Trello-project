@@ -3,7 +3,9 @@ package com.nbc.trello.card.service;
 import static com.nbc.trello.global.exception.ErrorCode.*;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.hibernate.annotations.Columns;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,22 +13,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nbc.trello.User.repository.UserRepository;
-import com.nbc.trello.board.entity.Board;
-import com.nbc.trello.board.repository.BoardRepository;
 import com.nbc.trello.card.Repository.CardRepository;
 import com.nbc.trello.card.dto.request.CardRequestDto;
 import com.nbc.trello.card.dto.request.CardUpdateRequestDto;
+import com.nbc.trello.card.dto.request.InviteUserRequestDto;
+import com.nbc.trello.card.dto.request.MoveCardRequestDto;
 import com.nbc.trello.card.dto.response.CardResponseDto;
 import com.nbc.trello.card.dto.response.GetCardResponseDto;
 import com.nbc.trello.card.dto.response.MoveCardResponseDto;
 import com.nbc.trello.card.dto.response.PageCardResponseDto;
 import com.nbc.trello.card.dto.response.UpdateCardResponseDto;
 import com.nbc.trello.card.entity.Card;
-import com.nbc.trello.columns.entity.Columns;
-import com.nbc.trello.columns.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
-import com.nbc.trello.users.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,18 +34,19 @@ public class CardService {
 
 	private final CardRepository cardRepository;
 
-	private final BoardRepository boardRepository;
+	private final BoardRepository boardRepository; // boardService 변경 예정
 
-	private final ColumnsRepository columnsRepository;
+	private final ColumnsRepository columnsRepository; //columnsService 변경 예정
 
-	private final UserRepository userRepository;
+	private final UserRepository userRepository; // userService 변경예정
 
 	@Transactional
 	public CardResponseDto createCard(Long boardId, Long columnId, CardRequestDto cardRequestDto, User user) {
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		boardUserCheck(board, user);
 		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
-		Card card = new Card(cardRequestDto, columns); // columns
+		Double maxWeight = findMaxWeightAndCheckNull(columnId);
+		Card card = new Card(cardRequestDto, maxWeight); // columns
 		// solution : 케스케이드 설정이 돼있기 때문에 worker를 만들어 등록만 시켜주면 알아서 영속성이 끝나기전에 임시로 받은 ID값이 worker로 들어가 저장된다.
 		card.createWorker(user);
 		Card saveCard = cardRepository.save(card);
@@ -71,7 +70,7 @@ public class CardService {
 		boardUserCheck(board, user);
 
 		Sort sort = pageable.getSort();
-		Sort additionalSort = Sort.by(Sort.Direction.DESC, "weight");
+		Sort additionalSort = Sort.by(Sort.Direction.ASC, "weight");
 		Sort finalSort = sort.and(additionalSort);
 		Pageable addFinalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), finalSort);
 
@@ -96,70 +95,74 @@ public class CardService {
 
 	// 카드 칼럼 이동
 	@Transactional
-	public MoveCardResponseDto moveCardToColumn(Long boardId, Long columnId, Long cardId, Long moveColumnId, Long moveCardId, User user) {
+	public MoveCardResponseDto moveCard(Long boardId, Long columnId, Long cardId, MoveCardRequestDto moveCardRequestDto, User user) {
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		boardUserCheck(board, user);
-		List<Card> cardList = cardRepository.findWeightCardList(moveColumnId);
-		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
-
-		if (cardList.isEmpty()) {
-			Columns columns = columnsRepository.findById(moveColumnId).orElseThrow(() -> new ApiException(INVALID_CARD));
-			card.moveColumn(columns);
-			card.updateCardWeight(columns.increaseMaxWeight());
-		} else {
-			Columns moveColumn = cardList.get(0).getColumns();
-			card = calculateWeightMoveCard(card, moveCardId, cardList);
-			card.moveColumn(moveColumn);
-		}
+		Card card = ChecklistAndRunCardAction(columnId, cardId, moveCardRequestDto);
 
 		cardRepository.save(card);
-		return new MoveCardResponseDto(card, moveCardId);
+		return new MoveCardResponseDto(card, moveCardRequestDto.getCardPosition());
 	}
 
-	// 카드 위치 이동
-	public MoveCardResponseDto moveCard(Long boardId, Long columnId, Long cardId, Long moveCardId, User user) {
-		Board board = boardRepository.findById(boardId).orElseThrow(() -> new ApiException(INVALID_CARD));
-		boardUserCheck(board, user);
-		List<Card> cardList = cardRepository.findWeightCardList(columnId);
-		if (cardList.isEmpty()){
-			throw new ApiException(INVALID_CARD);
-		}
-		Card moveCard = cardList.get(cardId.intValue());
-		moveCard = calculateWeightMoveCard(moveCard, moveCardId, cardList);
-		cardRepository.save(moveCard);
-
-		return new MoveCardResponseDto(moveCard, moveCardId);
-	}
-
+	@Transactional
 	// 작업자 초대
-	public void inviteWorkerToCard(Long boardId, Long columnId, Long cardId, Long userId, User user){
+	public void inviteWorkerToCard(Long boardId, Long columnId, Long cardId, InviteUserRequestDto inviteUserRequestDto, User user){
 		Board board = boardRepository.findById(boardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		boardUserCheck(board, user);
-		User inviteUser = userRepository.findById(userId).orElseThrow(() -> new ApiException(INVALID_CARD));
+
+		User inviteUser = userRepository.findById(inviteUserRequestDto.getUsername())
+			.orElseThrow(() -> new ApiException(INVALID_CARD));
 		boardUserCheck(board, inviteUser);
+
 		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		card.createWorker(inviteUser);
 	}
 
+	// 칼럼에 카드 있는지 체크후 동작 실행
+	public Card ChecklistAndRunCardAction(Long columnId, Long cardId, MoveCardRequestDto moveCardRequestDto){
+		List<Card> cardList = cardRepository.findWeightCardList(moveCardRequestDto.getColumnsPosition());
+		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
+
+		if (cardList.isEmpty()) {
+			// 칼럼 정보 가져오기
+			// Columns columns = cardRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD)).getColumns();
+			Columns columns = columnsRepository.findById(moveCardRequestDto.getColumnsPosition())
+				.orElseThrow(() -> new ApiException(INVALID_CARD));
+			card.addColumn(columns);
+			card.updateCardWeight(1.0);
+		} else {
+			Columns moveColumn = cardList.get(0).getColumns();
+			card = calculateWeightMoveCard(card, moveCardRequestDto, cardList);
+			card.addColumn(moveColumn);
+		}
+		return card;
+	}
 
 
 
 	// 옮기려는 카드, 옮길 카드 위치
-	private Card calculateWeightMoveCard(Card movecard, Long moveCardId, List<Card> cardList) {
+	private Card calculateWeightMoveCard(Card card, MoveCardRequestDto moveCardRequestDto, List<Card> cardList) {
 		// cardList값이 있는데 첫번째 칸에 들어가는 경우
 		double calculateWeight = 0;
-		if (moveCardId == 1) { // 옮기려는 카드 위치가 첫번째 일때
+		Long moveCardPosition = moveCardRequestDto.getCardPosition();
+		Long moveColumnPosition = moveCardRequestDto.getColumnsPosition();
+		if (moveCardPosition == 1) { // 옮기려는 카드 위치가 첫번째 일때
 			Card nextCard = cardList.get(0);
 			calculateWeight = nextCard.getWeight() / 2;
-		} else if (moveCardId >= cardList.size()) { // 옮기려는 카드 위치가 마지막 일때
-			Long moveColumnMaxWeight = cardList.get(0).getColumns().getMaxWeight();
+		} else if (moveCardPosition >= cardList.size()) { // 옮기려는 카드 위치가 마지막 일때
+			Double moveColumnMaxWeight = findMaxWeightAndCheckNull(moveColumnPosition);
 			calculateWeight = (cardList.get(cardList.size() - 1).getWeight() + moveColumnMaxWeight + 1) / 2;
 		} else { // 그 외 경우
-			calculateWeight = (cardList.get(moveCardId.intValue() - 1).getWeight()
-				+ cardList.get(moveCardId.intValue() + 1).getWeight()) / 2;
+			calculateWeight = (cardList.get(moveCardPosition.intValue() - 1).getWeight()
+				+ cardList.get(moveCardPosition.intValue() + 1).getWeight()) / 2;
 		}
-		movecard.updateCardWeight(calculateWeight);
-		return movecard;
+		card.updateCardWeight(calculateWeight);
+		return card;
+	}
+
+
+	public Double findMaxWeightAndCheckNull(Long columnId){
+		return cardRepository.findMaxWeightByColumnsID(columnId).orElse(1.0);
 	}
 
 	// 사용자 체크

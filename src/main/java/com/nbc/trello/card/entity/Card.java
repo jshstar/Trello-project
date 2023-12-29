@@ -3,12 +3,11 @@ package com.nbc.trello.card.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nbc.trello.User.entity.User;
+import org.hibernate.annotations.Columns;
+
 import com.nbc.trello.card.dto.request.CardRequestDto;
 import com.nbc.trello.card.dto.request.CardUpdateRequestDto;
-import com.nbc.trello.columns.entity.Columns;
 import com.nbc.trello.global.entity.BaseEntity;
-import com.nbc.trello.users.User;
 import com.nbc.trello.worker.entity.Worker;
 
 import jakarta.persistence.CascadeType;
@@ -54,13 +53,15 @@ public class Card extends BaseEntity {
 	@OneToMany(mappedBy = "card",cascade = CascadeType.ALL , orphanRemoval = true)
 	private List<Worker> worker;
 
+	@OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Comment> comments;
+
 	private double weight;
 
-	public Card(CardRequestDto cardRequestDto , Columns columns){ // columns
+	public Card(CardRequestDto cardRequestDto , double weight){ // columns
 		this.titles = cardRequestDto.getTitle();
-		this.columns = columns;
 		this.worker = new ArrayList<>();
-		this.weight = columns.increaseMaxWeight();
+		this.weight = weight;
 	}
 
 	public void createWorker(User user){
@@ -78,13 +79,13 @@ public class Card extends BaseEntity {
 		this.weight = weight;
 	}
 
-	public void moveColumn(Columns columns){
+	public void addColumn(Columns columns){
 		this.columns = columns;
 	}
 
-
-
-
+	public void addComment(Comment comment){
+		this.comments.add(comment);
+	}
 
 
 }
