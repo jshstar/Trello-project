@@ -1,4 +1,4 @@
-package com.nbc.trello.card.repository;
+package com.nbc.trello.card.Repository;
 
 import java.util.List;
 import java.util.Optional;

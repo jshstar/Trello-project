@@ -1,18 +1,19 @@
 package com.nbc.trello.comment;
 
-import com.nbc.trello.board.service.BoardService;
-import com.nbc.trello.card.repository.CardRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nbc.trello.card.entity.Card;
+import com.nbc.trello.card.repository.CardRepository;
 import com.nbc.trello.global.exception.ApiException;
 import com.nbc.trello.global.exception.ErrorCode;
 import com.nbc.trello.users.User;
 import com.nbc.trello.users.UserDetailsImpl;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
