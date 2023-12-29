@@ -20,6 +20,10 @@ public enum ErrorCode {
     UNAUTHORIZED_BOARD(403, "보드 접근 권한이 없습니다."),
     EXIST_BOARD_USER(409, "이미 보드에 초대한 유저입니다."),
 
+    // 컬럼
+    UNAUTHORIZED_COLUMN(403, "컬럼 권한이 없습니다"),
+    COLUMNS_NOT_FOUND_EXCEPTION(404, "컬럼을 찾을 수 없습니다."),
+
     INTERNAL_SERVER_ERROR(500, "서버 에러.");
     ;
 

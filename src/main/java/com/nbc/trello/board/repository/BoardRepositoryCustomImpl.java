@@ -1,8 +1,6 @@
 package com.nbc.trello.board.repository;
 
 import com.nbc.trello.board.domain.Board;
-import com.nbc.trello.board.domain.QBoard;
-import com.nbc.trello.column.QColumns;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -11,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.nbc.trello.board.domain.QBoard.board;
-import static com.nbc.trello.column.QColumns.columns;
+import static com.nbc.trello.column.entity.QColumns.columns;
 
 @RequiredArgsConstructor
 @Repository

@@ -21,12 +21,12 @@ public class ColumnsResponseDto {
 
   public static ColumnsResponseDto from(Columns columns) {
     return new ColumnsResponseDto(
-        columns.getColumnsId(),
-        columns.getColumnsName(),
-        columns.getColumnsOrder(),
-        columns.getBoard().getBoardId(),
-        columns.getCreatedAt(),
-        columns.getModifiedAt()
+            columns.getId(),
+            columns.getColumnsName(),
+            columns.getColumnsOrder(),
+            columns.getBoard().getId(),
+            columns.getCreatedAt(),
+            columns.getModifiedAt()
     );
   }
 }

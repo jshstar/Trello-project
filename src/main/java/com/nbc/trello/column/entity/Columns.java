@@ -1,7 +1,7 @@
 package com.nbc.trello.column.entity;
 
-import com.nbc.trello.board.Board;
-import com.nbc.trello.card.Card;
+import com.nbc.trello.board.domain.Board;
+import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.global.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,11 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 @Entity
 @Getter
@@ -28,7 +25,7 @@ public class Columns extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long columnsId;
+  private Long id;
 
   @Column(nullable = false)
   private String columnsName;
@@ -39,11 +36,12 @@ public class Columns extends BaseEntity {
   private Long maxWeight;
 
 
+  @Setter
   @ManyToOne
   @JoinColumn(name = "board_id", nullable = false)
   private Board board;
 
-  @OneToMany(mappedBy = "column", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  @OneToMany(mappedBy = "columns", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private List<Card> cards;
 
   public void updateColumns(String columnsName) {

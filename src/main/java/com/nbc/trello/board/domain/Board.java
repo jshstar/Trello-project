@@ -2,9 +2,9 @@ package com.nbc.trello.board.domain;
 
 import com.nbc.trello.board.request.BoardCreateRequest;
 import com.nbc.trello.board.request.BoardUpdateRequest;
-import com.nbc.trello.column.Columns;
+import com.nbc.trello.column.entity.Columns;
 import com.nbc.trello.global.entity.BaseEntity;
-import com.nbc.trello.user.User;
+import com.nbc.trello.users.User;
 import jakarta.persistence.*;
 import lombok.*;
 

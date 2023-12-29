@@ -1,6 +1,7 @@
 package com.nbc.trello.comment;
 
-import com.nbc.trello.card.Repository.CardRepository;
+import com.nbc.trello.board.service.BoardService;
+import com.nbc.trello.card.repository.CardRepository;
 import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.global.exception.ApiException;
 import com.nbc.trello.global.exception.ErrorCode;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CardRepository cardRepository;
-    //private final BoardService boardService;
+
     public void createComment(UserDetailsImpl userDetails, Card card, CommentRequestDto commentRequestDto) {
         User user = userDetails.getUser();
         String content = commentRequestDto.getContent();

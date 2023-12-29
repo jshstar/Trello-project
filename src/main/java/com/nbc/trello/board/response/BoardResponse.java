@@ -1,11 +1,13 @@
 package com.nbc.trello.board.response;
 
 import com.nbc.trello.board.domain.Board;
-import com.nbc.trello.column.Columns;
+import com.nbc.trello.column.dto.ColumnResponse;
+import com.nbc.trello.column.entity.Columns;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -17,12 +19,13 @@ public class BoardResponse {
     private String name;
     private String description;
     private String backgroundColor;
-    private List<Columns> columns; // TODO: 적당한 DTO로 수정
+    private List<ColumnResponse> columns = new ArrayList<>();
 
-    public BoardResponse(Board board) {
+    public BoardResponse(Board board, List<ColumnResponse> columns) {
         id = board.getId();
         name = board.getName();
         description = board.getDescription();
         backgroundColor = board.getBackgroundColor();
+        this.columns = columns;
     }
 }

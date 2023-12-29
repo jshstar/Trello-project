@@ -1,7 +1,8 @@
 package com.nbc.trello.users;
 
 
-import com.nbc.trello.global.dto.ApiResponse;
+import com.nbc.trello.global.dto.EmptyObject;
+import com.nbc.trello.global.response.ApiResponse;
 import com.nbc.trello.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -20,20 +21,20 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody UserRequestDTO request) {
+    public ResponseEntity<ApiResponse<EmptyObject>> signup(@Valid @RequestBody UserRequestDTO request) {
         userService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.of(HttpStatus.CREATED.value(), "회원 가입 성공", null));
+                .body(ApiResponse.of(HttpStatus.CREATED.value(), "회원 가입 성공"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<Void>> login() {
+    public ResponseEntity<ApiResponse<EmptyObject>> login() {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.of(HttpStatus.OK.value(), "로그인 성공", null));
+                .body(ApiResponse.of(HttpStatus.OK.value(), "로그인 성공"));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<EmptyObject>> logout(HttpServletResponse response) {
         return ResponseEntity.status(HttpStatus.OK)
                 .header(
                         HttpHeaders.SET_COOKIE,
@@ -44,15 +45,15 @@ public class UserController {
                                 .build()
                                 .toString()
                 )
-                .body(ApiResponse.of(HttpStatus.OK.value(), "로그아웃 성공", null));
+                .body(ApiResponse.of(HttpStatus.OK.value(), "로그아웃 성공"));
     }
 
 
     @PutMapping("/password")
-    public ResponseEntity<ApiResponse<Void>> modifyUserPassword(@RequestBody UserPWModifyRequestDTO requestDTO, HttpServletResponse response,
+    public ResponseEntity<ApiResponse<EmptyObject>> modifyUserPassword(@RequestBody UserPWModifyRequestDTO requestDTO, HttpServletResponse response,
                                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.modifyUserPassword(requestDTO, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.of(HttpStatus.OK.value(), "비밀번호 변경 성공", null));
+                .body(ApiResponse.of(HttpStatus.OK.value(), "비밀번호 변경 성공"));
     }
 }

@@ -1,7 +1,7 @@
 package com.nbc.trello.board.domain;
 
 import com.nbc.trello.global.entity.BaseEntity;
-import com.nbc.trello.user.User;
+import com.nbc.trello.users.User;
 import jakarta.persistence.*;
 import lombok.*;
 

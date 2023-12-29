@@ -19,7 +19,7 @@ public class ApiResponse<T> {
     }
 
     public static  ApiResponse<EmptyObject> of(Integer status, String message) {
-        EmptyObject emptyObject = new EmptyObject();
+        EmptyObject emptyObject = EmptyObject.get();
         return new ApiResponse<>(status, message, emptyObject);
     }
 }

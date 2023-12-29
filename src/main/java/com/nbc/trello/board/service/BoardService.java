@@ -10,12 +10,13 @@ import com.nbc.trello.board.request.BoardInviteRequest;
 import com.nbc.trello.board.request.BoardUpdateRequest;
 import com.nbc.trello.board.response.BoardListResponse;
 import com.nbc.trello.board.response.BoardResponse;
+import com.nbc.trello.column.entity.Columns;
+import com.nbc.trello.column.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
 import com.nbc.trello.global.exception.ErrorCode;
-import com.nbc.trello.user.User;
-import com.nbc.trello.user.UserRepository;
+import com.nbc.trello.users.User;
+import com.nbc.trello.users.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +29,10 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardUserRepository boardUserRepository;
     private final UserRepository userRepository;
+    private final ColumnsRepository columnsRepository;
 
     @Transactional
+
     public void createBoard(User user, BoardCreateRequest request) {
         Board board = new Board(request);
         board.setUser(user);
@@ -75,8 +78,10 @@ public class BoardService {
 
         Board board = boardRepository.findOneWithColumns(boardId)
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_BOARD_ID));
+        // TODO: columnId로 각 카드 목록 불러와서 BoardResponse에 넣어주자
 
-        return new BoardResponse(board);
+
+        return new BoardResponse(board, null);
     }
 
     @Transactional
