@@ -3,6 +3,7 @@ package com.nbc.trello.comment;
 import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.global.dto.ApiResponse;
 import com.nbc.trello.users.UserDetailsImpl;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -36,7 +38,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<ApiResponse<Void>> deleteComment(UserDetailsImpl userDetails, @PathVariable Long commentId) throws Exception {
+    public ResponseEntity<ApiResponse<Void>> deleteComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) throws Exception {
         commentService.deleteComment(userDetails,commentId);
 
         return ResponseEntity
@@ -45,11 +47,12 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getComment(UserDetailsImpl userDetails, @PathVariable Long cardId) throws Exception {
+    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long cardId) throws Exception {
+        List<CommentResponseDto> commentResponseDto = commentService.getComment(cardId);
+
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.of(HttpStatus.OK.value(), "success", commentService.getComment(cardId)));
+                .body(ApiResponse.of(HttpStatus.OK.value(), "success", commentResponseDto));
     }
-
-
 }

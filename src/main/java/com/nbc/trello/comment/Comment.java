@@ -5,9 +5,11 @@ import com.nbc.trello.global.entity.BaseEntity;
 import com.nbc.trello.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
