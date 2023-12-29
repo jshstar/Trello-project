@@ -7,6 +7,7 @@ public enum ErrorCode {
 
     // 유저
     INVALID_NICKNAME_PASSWORD(400, "닉네임 또는 패스워드를 확인해주세요."),
+    INVALID_USERNAME(404, "유저 이름이 올바르지 않습니다."),
     EQUAL_PASSWORD(400, "변경할 비밀번호와 기존 비밀번호가 같습니다."),
 
     // 댓글
@@ -14,8 +15,13 @@ public enum ErrorCode {
     NOT_EXIST_COMMENT(400, "댓글이 존재하지 않습니다."),
     NOT_EQUAL_CREATE_USER(400, "작성자와 본인이 일치하지 않습니다."),
 
+    // 보드
+    INVALID_BOARD_ID(404, "보드 id가 올바르지 않습니다."),
+    UNAUTHORIZED_BOARD(403, "보드 접근 권한이 없습니다."),
+    EXIST_BOARD_USER(409, "이미 보드에 초대한 유저입니다."),
 
     INTERNAL_SERVER_ERROR(500, "서버 에러.");
+    ;
 
     private final Integer status;
     private final String message;
