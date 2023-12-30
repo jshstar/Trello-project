@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,7 +61,7 @@ public class ColumnsController {
     }
 
     // 컬럼 이름 수정
-    @PatchMapping("/{boardId}/columns/{columnsId}")
+    @PutMapping("/{boardId}/columns/{columnsId}")
     public ResponseEntity<ApiResponse<ColumnsResponseDto>> updateColumns(
             @PathVariable Long boardId,
             @PathVariable Long columnsId,
@@ -76,7 +77,7 @@ public class ColumnsController {
     }
 
     //컬럼 순서 수정
-    @PatchMapping("/{boardId}/columns/{columnsId}/orders")
+    @PutMapping("/{boardId}/columns/{columnsId}/orders")
     public ResponseEntity<ApiResponse<ColumnsResponseDto>> changeOrders(
             @PathVariable Long boardId,
             @PathVariable Long columnsId,

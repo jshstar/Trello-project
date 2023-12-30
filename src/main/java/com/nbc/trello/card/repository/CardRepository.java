@@ -1,6 +1,7 @@
 package com.nbc.trello.card.repository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
@@ -15,7 +16,8 @@ import com.nbc.trello.card.entity.Card;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long>{
 	// 페이징 조회
-	Page<Card> findAllById(Pageable pageable, Long columnsId);
+	@Query("select c from Card c where c.columns.id = :columnsId order by c.weight")
+	Page<Card> findWeightCardPage(Pageable pageable, Long columnsId);
 
 
 	// 해당 칼럼에 최대 weight값 찾기
@@ -29,7 +31,11 @@ public interface CardRepository extends JpaRepository<Card, Long>{
 	default Optional<Card> findCard(Long columnsId, Long cardId){
 		List<Card> cards = findWeightCardList(columnsId);
 		if(cards.size() >= cardId){
-			return Optional.of(cards.get(cardId.intValue()-1));
+			for (Card card: cards) {
+				if(Objects.equals(card.getId(), cardId)) {
+					return Optional.of(card);
+				}
+			}
 		}
 		return Optional.empty();
 	}
@@ -37,8 +43,11 @@ public interface CardRepository extends JpaRepository<Card, Long>{
 	default void deleteCard(Long columnsId, Long cardId){
 		List<Card> cards = findWeightCardList(columnsId);
 		if(cards.size() >= cardId){
-			Card deleteCard = cards.get(cardId.intValue() - 1);
-			delete(deleteCard);
+			for (Card deletecard: cards) {
+				if(Objects.equals(deletecard.getId(), cardId)) {
+					delete(deletecard);
+				}
+			}
 		}
 	}
 

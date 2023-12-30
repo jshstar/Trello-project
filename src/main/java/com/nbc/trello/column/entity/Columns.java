@@ -30,10 +30,8 @@ public class Columns extends BaseEntity {
   @Column(nullable = false)
   private String columnsName;
 
-  @Column(name = "column_order",nullable = false)
+  @Column(name = "column_order",nullable = false) // 수정 예정
   private Integer columnsOrder;
-
-  private Long maxWeight;
 
 
   @Setter
@@ -49,8 +47,5 @@ public class Columns extends BaseEntity {
   }
 
   public void changeOrders(Integer columnsOrder) { this.columnsOrder = columnsOrder;}
-  public Long increaseMaxWeight(){
-    return this.maxWeight++;
-  }
 
 }

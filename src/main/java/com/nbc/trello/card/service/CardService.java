@@ -31,7 +31,9 @@ import com.nbc.trello.users.UserRepository;
 import com.nbc.trello.worker.repository.WorkerRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CardService {
@@ -80,7 +82,7 @@ public class CardService {
 		Sort finalSort = sort.and(additionalSort);
 		Pageable addFinalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), finalSort);
 
-		Page<Card> pageCardList = cardRepository.findAllById(addFinalPageable, columnId);
+		Page<Card> pageCardList = cardRepository.findWeightCardPage(addFinalPageable, columnId);
 		return new PageCardResponseDto(pageCardList);
 	}
 
@@ -107,8 +109,8 @@ public class CardService {
 		return new MoveCardResponseDto(card, moveCardRequestDto.getCardPosition());
 	}
 
-	@Transactional
 	// 작업자 초대
+	@Transactional
 	public void inviteWorkerToCard(Long boardId, Long columnId, Long cardId, InviteUserRequestDto inviteUserRequestDto, User user){
 		boardService.checkAuthorization(user, boardId);
 
@@ -118,8 +120,6 @@ public class CardService {
 
 		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		checkWorker(card, inviteUser);
-
-		card.createWorker(inviteUser);
 	}
 
 	// 칼럼에 카드 있는지 체크후 동작 실행
@@ -128,17 +128,18 @@ public class CardService {
 		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
 
 		if (cardList.isEmpty()) {
-			// 칼럼 정보 가져오기
-			// Columns columns = cardRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD)).getColumns();
 			Columns columns = columnsRepository.findById(moveCardRequestDto.getColumnsPosition())
 				.orElseThrow(() -> new ApiException(INVALID_CARD));
 			card.addColumn(columns);
 			card.updateCardWeight(1.0);
+
 		} else {
 			Columns moveColumn = cardList.get(0).getColumns();
 			card = calculateWeightMoveCard(card, moveCardRequestDto.getCardPosition() , cardList);
 			card.addColumn(moveColumn);
+
 		}
+
 		return card;
 	}
 
@@ -162,7 +163,7 @@ public class CardService {
 		} else { // 그 외 경우
 
 			calculateWeight = (cardList.get(moveCardPosition.intValue() - 1).getWeight()
-				+ cardList.get(moveCardPosition.intValue() + 1).getWeight()) / 2;
+				+ cardList.get(moveCardPosition.intValue()).getWeight()) / 2;
 
 		}
 		card.updateCardWeight(calculateWeight);
@@ -170,7 +171,7 @@ public class CardService {
 	}
 
 	// 작업자 명단에 초대한 유저가 있는지 확인
-	public void checkWorker(Card card, User user){
+	private void checkWorker(Card card, User user){
 		boolean userWorkerFlag = workerRepository.existsByCardIdAndUserId(card.getId(), user.getId());
 		if(!userWorkerFlag){
 			card.createWorker(user);

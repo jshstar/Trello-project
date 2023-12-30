@@ -9,14 +9,14 @@ public class MoveCardResponseDto {
 
 	private final String title;
 
-	private final Long columnId;
+	private final Long columnPosition;
 
-	private final Long cardId;
+	private final Long cardPosition;
 
 	public MoveCardResponseDto(Card card, Long moveCardId){
 		this.title = card.getTitles();
-		this.columnId = card.getColumns().getId();
-		this.cardId = moveCardId;
+		this.columnPosition = card.getColumns().getId();
+		this.cardPosition = moveCardId;
 	}
 
 }
