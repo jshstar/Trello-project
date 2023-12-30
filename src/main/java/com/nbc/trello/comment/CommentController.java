@@ -20,30 +20,26 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
     private final BoardService boardService;
-    private final CardService cardService;
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> createComment(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long boardId,
-        @PathVariable Long columnId,
         @PathVariable Long cardId,
-        CommentRequestDto commentRequestDto
+        @RequestBody CommentRequestDto commentRequestDto
     ) {
         boardService.checkAuthorization(userDetails.getUser(), boardId);
-        Card card = cardService.findCard(cardId);
-        commentService.createComment(userDetails, card, commentRequestDto);
+        commentService.createComment(userDetails, cardId, commentRequestDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.of(HttpStatus.CREATED.value(), "success", null));
     }
 
-    @PatchMapping("/{commentId}")
+    @PutMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> updateComment(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long boardId,
             @PathVariable Long commentId,
             @RequestBody CommentRequestDto commentRequestDto
-
     ) throws Exception {
         boardService.checkAuthorization(userDetails.getUser(), boardId);
         commentService.updateComment(userDetails, commentId, commentRequestDto);
