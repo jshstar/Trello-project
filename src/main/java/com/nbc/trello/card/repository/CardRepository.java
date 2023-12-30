@@ -19,7 +19,7 @@ public interface CardRepository extends JpaRepository<Card, Long>{
 
 
 	// 해당 칼럼에 최대 weight값 찾기
-	@Query("SELECT MAX(c.weight) FROM Card c WHERE c.columns = :columnsId")
+	@Query("SELECT MAX(c.weight) FROM Card c WHERE c.columns.id = :columnsId")
 	Optional<Double> findMaxWeightByColumnsID(Long columnsId);
 
 	// 해당 칼럼의 weight 기준 정렬 리스트 출력

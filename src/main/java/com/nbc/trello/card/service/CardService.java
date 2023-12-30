@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nbc.trello.board.domain.Board;
 import com.nbc.trello.board.service.BoardService;
 import com.nbc.trello.card.dto.request.CardRequestDto;
 import com.nbc.trello.card.dto.request.CardUpdateRequestDto;
@@ -51,12 +50,13 @@ public class CardService {
 
 	@Transactional
 	public CardResponseDto createCard(Long boardId, Long columnId, CardRequestDto cardRequestDto, User user) {
-		boardService.checkAuthorization(user, boardId);
+		User saveUser = userRepository.save(user);
+		boardService.checkAuthorization(saveUser, boardId);
 		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		Double maxWeight = findMaxWeightAndCheckNull(columnId)+1.0;
 		Card card = new Card(cardRequestDto, maxWeight); // columns
 		card.addColumn(columns);
-		card.createWorker(user);
+		card.createWorker(saveUser);
 		Card saveCard = cardRepository.save(card);
 		return new CardResponseDto(saveCard);
 	}

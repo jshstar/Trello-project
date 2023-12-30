@@ -108,8 +108,11 @@ public class BoardService {
 
     // 보드 유저인지 확인
     public void checkAuthorization(User user, Long boardId) {
-        Boolean exist = boardRepository.existsBoardByIdAndUserId(boardId, user.getId());
-        if (Boolean.FALSE.equals(exist)) {
+        Board board = boardRepository.findById(boardId)
+            .orElseThrow(() -> new ApiException(ErrorCode.INVALID_BOARD_ID));
+        Boolean exist = board.getUser().getId().equals(user.getId())
+            || boardUserRepository.existsById(new BoardUserId(user.getId(), boardId));
+        if (Boolean.FALSE.equals(exist) ) {
             throw new ApiException(ErrorCode.UNAUTHORIZED_BOARD);
         }
     }

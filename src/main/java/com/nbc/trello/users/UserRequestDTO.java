@@ -2,8 +2,10 @@ package com.nbc.trello.users;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class UserRequestDTO {
     @Pattern(regexp = "^[a-z0-9]{4,10}$")
     private String username;
