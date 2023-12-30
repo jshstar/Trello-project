@@ -40,29 +40,31 @@ public class CardService {
 
 	private final CardRepository cardRepository;
 
-	private final BoardService boardService; // boardService 변경 예정
+	private final BoardService boardService;
 
-	private final ColumnsRepository columnsRepository; //columnsService 변경 예정
+	private final ColumnsRepository columnsRepository;
 
-	private final UserRepository userRepository; // userService 변경예정
+	private final UserRepository userRepository;
 
 	private final WorkerRepository workerRepository;
 
 
 
+	// 카드 생성
 	@Transactional
 	public CardResponseDto createCard(Long boardId, Long columnId, CardRequestDto cardRequestDto, User user) {
 		User saveUser = userRepository.save(user);
 		boardService.checkAuthorization(saveUser, boardId);
 		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
 		Double maxWeight = findMaxWeightAndCheckNull(columnId)+1.0;
-		Card card = new Card(cardRequestDto, maxWeight); // columns
+		Card card = new Card(cardRequestDto, maxWeight);
 		card.addColumn(columns);
 		card.createWorker(saveUser);
 		Card saveCard = cardRepository.save(card);
 		return new CardResponseDto(saveCard);
 	}
 
+	// 카드 업데이트
 	@Transactional
 	public UpdateCardResponseDto updateCard(Long boardId, Long columnId, Long cardId, CardUpdateRequestDto cardUpdateRequestDto,
 		User user) {
@@ -145,10 +147,10 @@ public class CardService {
 
 
 
-	// 옮기려는 카드, 옮길 카드 위치
+	// 카드 위치에 따른 weight값 계산
 	private Card calculateWeightMoveCard(Card card, Long moveCardPosition, List<Card> cardList) {
-		// cardList값이 있는데 첫번째 칸에 들어가는 경우
-		double calculateWeight = 0;
+
+		double calculateWeight;
 
 		if (moveCardPosition == 1) { // 옮기려는 카드 위치가 첫번째 일때
 
@@ -162,8 +164,8 @@ public class CardService {
 
 		} else { // 그 외 경우
 
-			calculateWeight = (cardList.get(moveCardPosition.intValue() - 1).getWeight()
-				+ cardList.get(moveCardPosition.intValue()).getWeight()) / 2;
+			calculateWeight = (cardList.get(moveCardPosition.intValue() - 2).getWeight()
+				+ cardList.get(moveCardPosition.intValue()-1).getWeight()) / 2;
 
 		}
 		card.updateCardWeight(calculateWeight);
@@ -186,6 +188,7 @@ public class CardService {
 	}
 
 
+	// wieght값 체크 여부
 	public Double findMaxWeightAndCheckNull(Long columnId){
 		return cardRepository.findMaxWeightByColumnsID(columnId).orElse(1.0);
 	}

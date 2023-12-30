@@ -57,6 +57,7 @@ public class Card extends BaseEntity {
 	@OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments;
 
+	// 가중치
 	private double weight;
 
 	public Card(CardRequestDto cardRequestDto , double weight){ // columns

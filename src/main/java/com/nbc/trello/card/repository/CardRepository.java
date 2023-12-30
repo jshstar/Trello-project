@@ -28,6 +28,7 @@ public interface CardRepository extends JpaRepository<Card, Long>{
 	@Query("select c from Card c where c.columns.id = :columnsId order by c.weight")
 	List<Card> findWeightCardList(Long columnsId);
 
+	// 찾으려는 카드 출력
 	default Optional<Card> findCard(Long columnsId, Long cardId){
 		List<Card> cards = findWeightCardList(columnsId);
 		if(cards.size() >= cardId){
@@ -40,6 +41,7 @@ public interface CardRepository extends JpaRepository<Card, Long>{
 		return Optional.empty();
 	}
 
+	// 해당하는 카드 삭제
 	default void deleteCard(Long columnsId, Long cardId){
 		List<Card> cards = findWeightCardList(columnsId);
 		if(cards.size() >= cardId){
