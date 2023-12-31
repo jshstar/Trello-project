@@ -11,19 +11,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ColumnsResponseDto {
 
-  Long columnsId;
-  String columnsName;
-  Integer columnsOrder;
-  Long boardId;
-  LocalDateTime createdAt;
-  LocalDateTime modifiedAt;
+  private Long columnsId;
+  private String columnsName;
+  private Long boardId;
+  private LocalDateTime createdAt;
+  private LocalDateTime modifiedAt;
 
 
   public static ColumnsResponseDto from(Columns columns) {
     return new ColumnsResponseDto(
             columns.getId(),
             columns.getColumnsName(),
-            columns.getColumnsOrder(),
             columns.getBoard().getId(),
             columns.getCreatedAt(),
             columns.getModifiedAt()

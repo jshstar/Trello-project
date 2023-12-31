@@ -3,6 +3,7 @@ package com.nbc.trello.column.service;
 
 import com.nbc.trello.board.domain.Board;
 import com.nbc.trello.board.repository.BoardRepository;
+import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.column.dto.ColumnsOrderRequestDto;
 import com.nbc.trello.column.dto.ColumnsRequestDto;
 import com.nbc.trello.column.dto.ColumnsResponseDto;
@@ -11,6 +12,8 @@ import com.nbc.trello.column.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.nbc.trello.global.exception.ErrorCode;
@@ -33,18 +36,26 @@ public class ColumnsService {
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_BOARD_ID));
-        Columns savedColumns = Columns.builder().columnsName(requestDto.getColumnsName()).columnsOrder(
-                requestDto.getColumnsOrder()).board(board).build();
-        columnsRepository.save(savedColumns);
-        return ColumnsResponseDto.from(savedColumns);
+        // 다음 가중치 구하기
+        double nextWeight = 1;
+        Optional<Columns> optionalColumn = columnsRepository.findFirstByBoardOrderByWeightDesc(board);
+        if (optionalColumn.isPresent())
+            nextWeight = optionalColumn.get().getWeight() + 1;
+
+        Columns save = Columns.builder()
+                .columnsName(requestDto.getColumnsName())
+                .weight(nextWeight).board(board).build();
+        columnsRepository.save(save);
+
+        return ColumnsResponseDto.from(save);
     }
 
     //컬럼 전체 조회
     public List<ColumnsResponseDto> getColumnsList(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_BOARD_ID));
-        List<Columns> columnList = columnsRepository.findAllByBoardOrderByColumnsOrder(board);
-        return columnList.stream().map(ColumnsResponseDto::from).collect(Collectors.toList());
+        List<Columns> columnList = columnsRepository.findAllByBoardOrderByWeightAsc(board);
+        return columnList.stream().map(ColumnsResponseDto::from).toList();
     }
 
     //컬럼 이름 수정
@@ -58,11 +69,48 @@ public class ColumnsService {
 
     //컬럼 순서 수정
     @Transactional
-    public ColumnsResponseDto changeOrders(Long columnsId, ColumnsOrderRequestDto requestDto) {
+    public ColumnsResponseDto changeOrders(Long columnsId, Long boardId, ColumnsOrderRequestDto requestDto) {
         Columns columns = findByColumnsId(columnsId);
-        columns.changeOrders(requestDto.getColumnsOrder());
+
+        Board board = boardRepository.findOneWithColumns(boardId)
+                .orElseThrow(() -> new ApiException(ErrorCode.INVALID_BOARD_ID));
+
+        // 원하는 위치의 카드와 위치-1의 카드의 가중치 더해서 2로 나눈걸로 정렬 순서 설정
+        List<Columns> columnList = board.getColumns();
+        double weight = 0;
+        Integer moveIndex = requestDto.getColumnsOrder();
+        boolean moveColumnsUnderCheck
+            = currentColumnsPositionCompareMovePosition(columns.getId(), moveIndex.longValue(), columnList);
+
+        if (moveIndex == 0) {
+            weight = columnList.get(0).getWeight() - 1;
+        } else if (moveIndex >= columnList.size() -  1) {
+            weight = columnList.get(columnList.size() - 1).getWeight() + 1;
+        } else {
+            if(moveColumnsUnderCheck) {
+                weight = (columnList.get(moveIndex).getWeight() + columnList.get(moveIndex + 1).getWeight()) / 2;
+            } else {
+                weight = (columnList.get(moveIndex).getWeight() + columnList.get(moveIndex - 1).getWeight()) / 2;
+            }
+        }
+        columns.updateWeight(weight);
 
         return ColumnsResponseDto.from(columns);
+    }
+
+    // 옮기려는 칼럼의 위치가 현재 칼럼위치보다 큰경우
+    public boolean currentColumnsPositionCompareMovePosition(Long columnsId, Long moveIndex, List<Columns> columnsList){
+        boolean moveColumnsUnderCheck = false;
+        for (Columns value : columnsList) {
+            if (Objects.equals(columnsId, value.getId())) {
+                if (columnsId < moveIndex ) {
+                    moveColumnsUnderCheck = true;
+                    break;
+                }
+            }
+        }
+        return moveColumnsUnderCheck;
+
     }
 
     //컬럼삭제

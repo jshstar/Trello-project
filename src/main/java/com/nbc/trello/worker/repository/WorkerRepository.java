@@ -10,6 +10,7 @@ import com.nbc.trello.worker.entity.WorkerID;
 @Repository
 public interface WorkerRepository extends JpaRepository<Worker, WorkerID> {
 
-	@Query("SELECT CASE WHEN COUNT(w) > 0 THEN true ELSE false END FROM Worker w WHERE w.id.cardId = :cardId AND w.id.userId = :userId")
+	@Query("SELECT CASE WHEN COUNT(w) > 0 THEN true ELSE false END FROM Worker w "
+		+ "WHERE w.id.cardId = :cardId AND w.id.userId = :userId")
 	boolean existsByCardIdAndUserId(Long cardId, Long userId);
 }

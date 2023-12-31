@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class PageCardResponseDto {
 
-	private Page<PageCardDtoWrapper> pageCard;
+	private final Page<PageCardDtoWrapper> pageCard;
 
 	public PageCardResponseDto(Page<Card> pageCard){
 		this.pageCard = pageCard.map(PageCardDtoWrapper::new);

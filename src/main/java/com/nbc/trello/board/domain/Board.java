@@ -28,6 +28,7 @@ public class Board extends BaseEntity {
     private User user;
 
     @Builder.Default
+    @OrderBy("weight ASC")
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Columns> columns = new ArrayList<>();
 

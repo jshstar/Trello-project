@@ -4,20 +4,21 @@ import com.nbc.trello.comment.Comment;
 
 import java.time.LocalDateTime;
 
+import lombok.Getter;
+
+@Getter
 public class CommentResponseDto {
-    private String username;
-    private String cardTitle;
-    private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifedAt;
+    private final String username;
+    private final String content;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime modifiedAt;
 
 
 
     public CommentResponseDto(Comment comment) {
         this.username = comment.getUser().getUsername();
-        this.cardTitle = comment.getCard().getTitles();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
-        this.modifedAt = comment.getModifiedAt();
+        this.modifiedAt = comment.getModifiedAt();
     }
 }

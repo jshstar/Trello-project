@@ -35,6 +35,7 @@ public class CardController {
 
 	private final CardService cardService;
 
+	// 카드 생성
 	@PostMapping("/{boardId}/columns/{columnId}/cards")
 	public ResponseEntity<ApiResponse<CardResponseDto>> createCard(@PathVariable Long boardId,
 		@PathVariable Long columnId,
@@ -69,7 +70,7 @@ public class CardController {
 			.body(ApiResponse.of(HttpStatus.OK.value(),"카드 페이징 조회 성공", pageCardResponseDto));
 	}
 
-	// 카드 단건조회
+	// 카드 단건 조회
 	@GetMapping("/{boardID}/columns/{columnId}/cards/{cardId}")
 	public ResponseEntity<ApiResponse<GetCardResponseDto>> getCard(@PathVariable Long boardID,
 		@PathVariable Long columnId,
@@ -81,7 +82,7 @@ public class CardController {
 			.body(ApiResponse.of(HttpStatus.OK.value(),"카드 조회 성공", getCardResponseDto));
 	}
 
-	// 삭제처리
+	// 카드 삭제
 	@DeleteMapping("/{boardId}/columns/{columnId}/cards/{cardId}")
 	public ResponseEntity<ApiResponse<Void>> deleteCard(@PathVariable Long boardId,
 		@PathVariable Long columnId,
@@ -105,7 +106,7 @@ public class CardController {
 			.body(ApiResponse.of(HttpStatus.OK.value(), "카드 이동 성공", moveCardResponseDto));
 	}
 
-	// 작업자 지정 //(body username)
+	// 작업자 초대
 	@PostMapping("/{boardId}/columns/{columnId}/cards/{cardId}/invite")
 	public ResponseEntity<ApiResponse<Void>> createWorkerCard(@PathVariable Long boardId,
 		@PathVariable Long columnId,

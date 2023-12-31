@@ -35,5 +35,6 @@ public class Worker {
 	public Worker(Card card, User user){
 		this.card = card;
 		this.user = user;
+		this.id = new WorkerID(card.getId(),user.getId());
 	}
 }

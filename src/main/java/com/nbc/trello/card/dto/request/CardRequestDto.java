@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 public class CardRequestDto {
-	// 제목
 	@NotBlank
 	private String title;
 

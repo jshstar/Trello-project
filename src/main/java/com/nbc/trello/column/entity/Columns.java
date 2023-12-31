@@ -3,15 +3,9 @@ package com.nbc.trello.column.entity;
 import com.nbc.trello.board.domain.Board;
 import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.global.entity.BaseEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.*;
@@ -30,11 +24,7 @@ public class Columns extends BaseEntity {
   @Column(nullable = false)
   private String columnsName;
 
-  @Column(name = "column_order",nullable = false)
-  private Integer columnsOrder;
-
-  private Long maxWeight;
-
+  private double weight;
 
   @Setter
   @ManyToOne
@@ -42,15 +32,14 @@ public class Columns extends BaseEntity {
   private Board board;
 
   @OneToMany(mappedBy = "columns", cascade = CascadeType.REMOVE, orphanRemoval = true)
-  private List<Card> cards;
+  @OrderBy("weight asc")
+  private List<Card> cards = new ArrayList<>();
 
   public void updateColumns(String columnsName) {
     this.columnsName = columnsName;
   }
 
-  public void changeOrders(Integer columnsOrder) { this.columnsOrder = columnsOrder;}
-  public Long increaseMaxWeight(){
-    return this.maxWeight++;
+  public void updateWeight(double weight) {
+    this.weight = weight;
   }
-
 }
