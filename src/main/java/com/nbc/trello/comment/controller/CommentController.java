@@ -1,10 +1,11 @@
-package com.nbc.trello.comment;
+package com.nbc.trello.comment.controller;
 
 import com.nbc.trello.board.service.BoardService;
-import com.nbc.trello.card.entity.Card;
-import com.nbc.trello.card.service.CardService;
+import com.nbc.trello.comment.dto.request.CommentRequestDto;
+import com.nbc.trello.comment.dto.response.CommentResponseDto;
+import com.nbc.trello.comment.service.CommentService;
 import com.nbc.trello.global.response.ApiResponse;
-import com.nbc.trello.users.UserDetailsImpl;
+import com.nbc.trello.board.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

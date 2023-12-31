@@ -2,7 +2,7 @@ package com.nbc.trello.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbc.trello.global.response.ApiResponse;
-import com.nbc.trello.users.UserDetailsServiceImpl;
+import com.nbc.trello.board.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

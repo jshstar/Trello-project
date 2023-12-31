@@ -4,7 +4,7 @@ import com.nbc.trello.board.request.BoardCreateRequest;
 import com.nbc.trello.board.request.BoardUpdateRequest;
 import com.nbc.trello.column.entity.Columns;
 import com.nbc.trello.global.entity.BaseEntity;
-import com.nbc.trello.users.User;
+import com.nbc.trello.users.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

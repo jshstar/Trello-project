@@ -1,4 +1,4 @@
-package com.nbc.trello.comment;
+package com.nbc.trello.comment.dto.request;
 
 import lombok.Getter;
 

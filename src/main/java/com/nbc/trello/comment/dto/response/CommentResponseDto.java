@@ -1,6 +1,6 @@
-package com.nbc.trello.comment;
+package com.nbc.trello.comment.dto.response;
 
-import com.nbc.trello.comment.Comment;
+import com.nbc.trello.comment.entity.Comment;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package com.nbc.trello.comment;
+package com.nbc.trello.comment.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,10 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.card.service.CardService;
+import com.nbc.trello.comment.repository.CommentRepository;
+import com.nbc.trello.comment.dto.request.CommentRequestDto;
+import com.nbc.trello.comment.dto.response.CommentResponseDto;
+import com.nbc.trello.comment.entity.Comment;
 import com.nbc.trello.global.exception.ApiException;
 import com.nbc.trello.global.exception.ErrorCode;
-import com.nbc.trello.users.User;
-import com.nbc.trello.users.UserDetailsImpl;
+import com.nbc.trello.users.entity.User;
+import com.nbc.trello.board.security.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 

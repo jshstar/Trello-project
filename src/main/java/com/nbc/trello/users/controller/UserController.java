@@ -1,9 +1,14 @@
-package com.nbc.trello.users;
+package com.nbc.trello.users.controller;
 
 
+import com.nbc.trello.board.security.UserDetailsImpl;
 import com.nbc.trello.global.dto.EmptyObject;
 import com.nbc.trello.global.response.ApiResponse;
 import com.nbc.trello.jwt.JwtUtil;
+import com.nbc.trello.users.dto.request.UserPWModifyRequestDto;
+import com.nbc.trello.users.dto.request.UserRequestDto;
+import com.nbc.trello.users.service.UserService;
+
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +26,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<EmptyObject>> signup(@Valid @RequestBody UserRequestDTO request) {
+    public ResponseEntity<ApiResponse<EmptyObject>> signup(@Valid @RequestBody UserRequestDto request) {
         userService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(HttpStatus.CREATED.value(), "회원 가입 성공"));
@@ -50,7 +55,7 @@ public class UserController {
 
 
     @PutMapping("/password")
-    public ResponseEntity<ApiResponse<EmptyObject>> modifyUserPassword(@RequestBody UserPWModifyRequestDTO requestDTO, HttpServletResponse response,
+    public ResponseEntity<ApiResponse<EmptyObject>> modifyUserPassword(@RequestBody UserPWModifyRequestDto requestDTO, HttpServletResponse response,
                                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.modifyUserPassword(requestDTO, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK)

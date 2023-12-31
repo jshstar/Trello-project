@@ -1,9 +1,13 @@
-package com.nbc.trello.users;
+package com.nbc.trello.users.service;
 
 import com.nbc.trello.global.exception.ApiException;
 import com.nbc.trello.global.exception.ErrorCode;
 import com.nbc.trello.jwt.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
+import com.nbc.trello.users.dto.request.UserPWModifyRequestDto;
+import com.nbc.trello.users.repository.UserRepository;
+import com.nbc.trello.users.dto.request.UserRequestDto;
+import com.nbc.trello.users.entity.User;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
-    public void signup(UserRequestDTO request) {
+    public void signup(UserRequestDto request) {
         String username = request.getUsername();
         String password = passwordEncoder.encode(request.getPassword());
 
@@ -32,7 +36,7 @@ public class UserService {
     }
 
     @Transactional
-    public void modifyUserPassword(UserPWModifyRequestDTO requestDTO, User user) {
+    public void modifyUserPassword(UserPWModifyRequestDto requestDTO, User user) {
         User savedUser = userRepository.save(user);
         String beforePassword = requestDTO.getBeforePassword();
         String afterPassword = requestDTO.getAfterPassword();

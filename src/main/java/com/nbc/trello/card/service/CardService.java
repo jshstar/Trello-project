@@ -27,8 +27,8 @@ import com.nbc.trello.card.repository.CardRepository;
 import com.nbc.trello.column.entity.Columns;
 import com.nbc.trello.column.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
-import com.nbc.trello.users.User;
-import com.nbc.trello.users.UserRepository;
+import com.nbc.trello.users.entity.User;
+import com.nbc.trello.users.repository.UserRepository;
 import com.nbc.trello.worker.repository.WorkerRepository;
 
 import lombok.RequiredArgsConstructor;

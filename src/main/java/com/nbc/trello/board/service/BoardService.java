@@ -15,13 +15,12 @@ import com.nbc.trello.column.entity.Columns;
 import com.nbc.trello.column.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
 import com.nbc.trello.global.exception.ErrorCode;
-import com.nbc.trello.users.User;
-import com.nbc.trello.users.UserRepository;
+import com.nbc.trello.users.entity.User;
+import com.nbc.trello.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
