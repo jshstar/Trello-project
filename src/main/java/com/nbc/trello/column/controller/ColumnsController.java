@@ -77,7 +77,7 @@ public class ColumnsController {
     }
 
     //컬럼 순서 수정
-    @PutMapping("/{boardId}/columns/{columnsId}/orders")
+    @PostMapping("/{boardId}/columns/{columnsId}/orders")
     public ResponseEntity<ApiResponse<ColumnsResponseDto>> changeOrders(
             @PathVariable Long boardId,
             @PathVariable Long columnsId,
@@ -86,7 +86,7 @@ public class ColumnsController {
     ) {
         boardService.checkAuthorization(userDetails.getUser(), boardId);
 
-        ColumnsResponseDto responseDto = columnsService.changeOrders(columnsId, requestDto);
+        ColumnsResponseDto responseDto = columnsService.changeOrders(columnsId, boardId, requestDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.of(HttpStatus.OK.value(), "컬럼 순서 수정 성공", responseDto));

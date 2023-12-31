@@ -10,7 +10,4 @@ public class ColumnsRequestDto {
   @NotBlank
   @Size(max = 200)
   String columnsName;
-
-  Integer columnsOrder;
-
 }

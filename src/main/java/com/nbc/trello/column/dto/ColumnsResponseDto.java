@@ -13,7 +13,6 @@ public class ColumnsResponseDto {
 
   private Long columnsId;
   private String columnsName;
-  private Integer columnsOrder;
   private Long boardId;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;
@@ -23,7 +22,6 @@ public class ColumnsResponseDto {
     return new ColumnsResponseDto(
             columns.getId(),
             columns.getColumnsName(),
-            columns.getColumnsOrder(),
             columns.getBoard().getId(),
             columns.getCreatedAt(),
             columns.getModifiedAt()

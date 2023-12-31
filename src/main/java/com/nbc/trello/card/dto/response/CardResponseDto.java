@@ -12,10 +12,8 @@ public class CardResponseDto {
 
 	private final LocalDateTime createAt;
 
-	private final String username;
 	public CardResponseDto(Card card){
 		this.title = card.getTitles();
-		this.username = card.getWorker().get(0).getUser().getUsername();
 		this.createAt = card.getCreatedAt();
 	}
 

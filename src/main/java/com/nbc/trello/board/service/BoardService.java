@@ -10,6 +10,7 @@ import com.nbc.trello.board.request.BoardInviteRequest;
 import com.nbc.trello.board.request.BoardUpdateRequest;
 import com.nbc.trello.board.response.BoardListResponse;
 import com.nbc.trello.board.response.BoardResponse;
+import com.nbc.trello.column.dto.ColumnResponse;
 import com.nbc.trello.column.entity.Columns;
 import com.nbc.trello.column.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,7 +34,6 @@ public class BoardService {
     private final ColumnsRepository columnsRepository;
 
     @Transactional
-
     public void createBoard(User user, BoardCreateRequest request) {
         Board board = new Board(request);
         board.setUser(user);
@@ -68,7 +69,7 @@ public class BoardService {
         List<Board> boards = boardRepository.findAllByUserId(user.getId());
 
         return boards.stream()
-                .map(board -> new BoardListResponse()).toList();
+                .map(BoardListResponse::new).toList();
     }
 
     @Transactional(readOnly = true)
@@ -76,12 +77,14 @@ public class BoardService {
         // 조회 권한 체크
         checkAuthorization(user, boardId);
 
+        // n+1을 1+1로 해결.. 근데 서버에서 루프 돌아야함
         Board board = boardRepository.findOneWithColumns(boardId)
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_BOARD_ID));
-        // TODO: columnId로 각 카드 목록 불러와서 BoardResponse에 넣어주자
+        List<Long> columnIds = board.getColumns().stream().map(Columns::getId).toList();
+        List<Columns> columnsList = columnsRepository.findAllByIdIn(columnIds);
+        List<ColumnResponse> response = columnsList.stream().map(ColumnResponse::new).toList();
 
-
-        return new BoardResponse(board, null);
+        return new BoardResponse(board, response);
     }
 
     @Transactional
