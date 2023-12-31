@@ -192,7 +192,6 @@ public class CardService {
 
 	// 동일 칼럼 안에 있는 카드의 위치가 옮기려는 카드의 위치보다 작은경우 체크
 	private boolean currentCardPositionCompareMovePosition(Long currentCardId, Long moveCardPosition, List<Card> cardList){
-		// 동일 칼럼 안에서 움직이려는 카드가 현재 위치하고 있는 카드보다 큰경우
 		boolean moveCardUnderCheck = false;
 		for (Card value : cardList) {
 			if (Objects.equals(currentCardId, value.getId())) {
