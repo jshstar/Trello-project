@@ -3,6 +3,7 @@ package com.nbc.trello.card.service;
 import static com.nbc.trello.global.exception.ErrorCode.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -152,11 +153,12 @@ public class CardService {
 	}
 
 
-
 	// 카드 위치에 따른 weight값 계산
 	private Card calculateWeightMoveCard(Card card, Long moveCardPosition, List<Card> cardList) {
 
 		double calculateWeight;
+		Long currentCardID = card.getId();
+		boolean moveCardUnderCheck = currentCardPositionCompareMovePosition(currentCardID, moveCardPosition, cardList);
 
 		if (moveCardPosition == 1) { // 옮기려는 카드 위치가 첫번째 일때
 
@@ -169,14 +171,40 @@ public class CardService {
 			calculateWeight = moveColumnMaxWeight+1;
 
 		} else { // 그 외 경우
+			if(moveCardUnderCheck)
+			{
+				calculateWeight = (cardList.get(moveCardPosition.intValue() -1).getWeight() +
+					cardList.get(moveCardPosition.intValue()).getWeight())/2;
 
-			calculateWeight = (cardList.get(moveCardPosition.intValue() - 2).getWeight()
-				+ cardList.get(moveCardPosition.intValue()-1).getWeight()) / 2;
+			} else {
+
+				calculateWeight = (cardList.get(moveCardPosition.intValue() - 2).getWeight()
+					+ cardList.get(moveCardPosition.intValue()-1).getWeight()) / 2;
+
+			}
+
 
 		}
 		card.updateCardWeight(calculateWeight);
 		return card;
 	}
+
+
+	// 동일 칼럼 안에 있는 카드의 위치가 옮기려는 카드의 위치보다 작은경우 체크
+	private boolean currentCardPositionCompareMovePosition(Long currentCardId, Long moveCardPosition, List<Card> cardList){
+		// 동일 칼럼 안에서 움직이려는 카드가 현재 위치하고 있는 카드보다 큰경우
+		boolean moveCardUnderCheck = false;
+		for (Card value : cardList) {
+			if (Objects.equals(currentCardId, value.getId())) {
+				if (currentCardId < moveCardPosition - 1) {
+					moveCardUnderCheck = true;
+					break;
+				}
+			}
+		}
+		return moveCardUnderCheck;
+	}
+
 
 	// 작업자 명단에 초대한 유저가 있는지 확인
 	private void checkWorker(Card card, User user){

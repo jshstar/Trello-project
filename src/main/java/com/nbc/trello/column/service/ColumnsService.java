@@ -3,6 +3,7 @@ package com.nbc.trello.column.service;
 
 import com.nbc.trello.board.domain.Board;
 import com.nbc.trello.board.repository.BoardRepository;
+import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.column.dto.ColumnsOrderRequestDto;
 import com.nbc.trello.column.dto.ColumnsRequestDto;
 import com.nbc.trello.column.dto.ColumnsResponseDto;
@@ -11,6 +12,7 @@ import com.nbc.trello.column.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -77,17 +79,38 @@ public class ColumnsService {
         List<Columns> columnList = board.getColumns();
         double weight = 0;
         Integer moveIndex = requestDto.getColumnsOrder();
+        boolean moveColumnsUnderCheck
+            = currentColumnsPositionCompareMovePosition(columns.getId(), moveIndex.longValue(), columnList);
 
         if (moveIndex == 0) {
             weight = columnList.get(0).getWeight() - 1;
         } else if (moveIndex >= columnList.size() -  1) {
             weight = columnList.get(columnList.size() - 1).getWeight() + 1;
         } else {
-            weight = (columnList.get(moveIndex).getWeight() + columnList.get(moveIndex - 1).getWeight()) / 2;
+            if(moveColumnsUnderCheck) {
+                weight = (columnList.get(moveIndex).getWeight() + columnList.get(moveIndex + 1).getWeight()) / 2;
+            } else {
+                weight = (columnList.get(moveIndex).getWeight() + columnList.get(moveIndex - 1).getWeight()) / 2;
+            }
         }
         columns.updateWeight(weight);
 
         return ColumnsResponseDto.from(columns);
+    }
+
+    // 옮기려는 칼럼의 위치가 현재 칼럼위치보다 큰경우
+    public boolean currentColumnsPositionCompareMovePosition(Long columnsId, Long moveIndex, List<Columns> columnsList){
+        boolean moveColumnsUnderCheck = false;
+        for (Columns value : columnsList) {
+            if (Objects.equals(columnsId, value.getId())) {
+                if (columnsId < moveIndex ) {
+                    moveColumnsUnderCheck = true;
+                    break;
+                }
+            }
+        }
+        return moveColumnsUnderCheck;
+
     }
 
     //컬럼삭제
