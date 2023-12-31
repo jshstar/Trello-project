@@ -55,7 +55,8 @@ public class CardService {
 	public CardResponseDto createCard(Long boardId, Long columnId, CardRequestDto cardRequestDto, User user) {
 		User saveUser = userRepository.save(user);
 		boardService.checkAuthorization(saveUser, boardId);
-		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
+		Columns columns = columnsRepository.findById(columnId)
+			.orElseThrow(() -> new ApiException(COLUMNS_NOT_FOUND_EXCEPTION));
 		Double maxWeight = findMaxWeightAndCheckNull(columnId)+1.0;
 		Card card = new Card(cardRequestDto, maxWeight);
 		card.addColumn(columns);
@@ -69,8 +70,10 @@ public class CardService {
 	public UpdateCardResponseDto updateCard(Long boardId, Long columnId, Long cardId, CardUpdateRequestDto cardUpdateRequestDto,
 		User user) {
 		boardService.checkAuthorization(user, boardId);
-		Columns columns = columnsRepository.findById(columnId).orElseThrow(() -> new ApiException(INVALID_CARD));
-		Card card = cardRepository.findById(cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
+		Columns columns = columnsRepository.findById(columnId)
+			.orElseThrow(() -> new ApiException(COLUMNS_NOT_FOUND_EXCEPTION));
+		Card card = cardRepository.findById(cardId)
+			.orElseThrow(() -> new ApiException(INVALID_CARD));
 		card.updateCard(cardUpdateRequestDto, columns);
 		return new UpdateCardResponseDto(card);
 	}
@@ -91,7 +94,8 @@ public class CardService {
 	// 카드 선택 조회
 	public GetCardResponseDto getCard(Long boardId, Long columnId, Long cardId, User user) {
 		boardService.checkAuthorization(user, boardId);
-		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
+		Card card = cardRepository.findCard(columnId, cardId)
+			.orElseThrow(() -> new ApiException(INVALID_CARD));
 		return new GetCardResponseDto(card);
 	}
 
@@ -117,21 +121,23 @@ public class CardService {
 		boardService.checkAuthorization(user, boardId);
 
 		User inviteUser = userRepository.findByUsername(inviteUserRequestDto.getUsername())
-			.orElseThrow(() -> new ApiException(INVALID_CARD));
+			.orElseThrow(() -> new ApiException(INVALID_USERNAME));
 		boardService.checkAuthorization(user, boardId);
 
-		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
+		Card card = cardRepository.findCard(columnId, cardId)
+			.orElseThrow(() -> new ApiException(INVALID_CARD));
 		checkWorker(card, inviteUser);
 	}
 
 	// 칼럼에 카드 있는지 체크후 동작 실행
 	public Card ChecklistAndRunCardAction(Long columnId, Long cardId, MoveCardRequestDto moveCardRequestDto){
 		List<Card> cardList = cardRepository.findWeightCardList(moveCardRequestDto.getColumnsPosition());
-		Card card = cardRepository.findCard(columnId, cardId).orElseThrow(() -> new ApiException(INVALID_CARD));
+		Card card = cardRepository.findCard(columnId, cardId)
+			.orElseThrow(() -> new ApiException(INVALID_CARD));
 
 		if (cardList.isEmpty()) {
 			Columns columns = columnsRepository.findById(moveCardRequestDto.getColumnsPosition())
-				.orElseThrow(() -> new ApiException(INVALID_CARD));
+				.orElseThrow(() -> new ApiException(COLUMNS_NOT_FOUND_EXCEPTION));
 			card.addColumn(columns);
 			card.updateCardWeight(1.0);
 

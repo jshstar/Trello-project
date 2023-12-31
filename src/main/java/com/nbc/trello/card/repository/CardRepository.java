@@ -1,5 +1,7 @@
 package com.nbc.trello.card.repository;
 
+import static com.nbc.trello.global.exception.ErrorCode.*;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.nbc.trello.card.entity.Card;
+import com.nbc.trello.global.exception.ApiException;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long>{
@@ -44,12 +47,20 @@ public interface CardRepository extends JpaRepository<Card, Long>{
 	// 해당하는 카드 삭제
 	default void deleteCard(Long columnsId, Long cardId){
 		List<Card> cards = findWeightCardList(columnsId);
+		boolean deleteFlag = false;
 		if(cards.size() >= cardId){
 			for (Card deletecard: cards) {
 				if(Objects.equals(deletecard.getId(), cardId)) {
 					delete(deletecard);
+					deleteFlag = true;
+					break;
 				}
 			}
+
+			if(!deleteFlag){
+				throw new ApiException(INVALID_DELETE_CARD);
+			}
+
 		}
 	}
 

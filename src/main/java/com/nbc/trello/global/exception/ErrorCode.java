@@ -26,7 +26,8 @@ public enum ErrorCode {
     COLUMNS_NOT_FOUND_EXCEPTION(404, "컬럼을 찾을 수 없습니다."),
 
 	//카드
-	INVALID_CARD(404, "찾으시는 카드가 없습니다."),
+	INVALID_CARD(404, "잘못된 카드 요청입니다."),
+    INVALID_DELETE_CARD(404, "잘못된 카드 삭제 요청입니다."),
 
 
 
