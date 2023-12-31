@@ -6,9 +6,9 @@ import java.util.List;
 import com.nbc.trello.card.dto.request.CardRequestDto;
 import com.nbc.trello.card.dto.request.CardUpdateRequestDto;
 import com.nbc.trello.column.entity.Columns;
-import com.nbc.trello.comment.Comment;
+import com.nbc.trello.comment.entity.Comment;
 import com.nbc.trello.global.entity.BaseEntity;
-import com.nbc.trello.users.User;
+import com.nbc.trello.users.entity.User;
 import com.nbc.trello.worker.entity.Worker;
 
 import jakarta.persistence.CascadeType;

@@ -1,6 +1,6 @@
 package com.nbc.trello.worker.entity;
 
-import com.nbc.trello.users.User;
+import com.nbc.trello.users.entity.User;
 import com.nbc.trello.card.entity.Card;
 
 import jakarta.persistence.EmbeddedId;

@@ -1,16 +1,12 @@
 package com.nbc.trello.column.controller;
 
-import static com.nbc.trello.global.exception.ErrorCode.UNAUTHORIZED_COLUMN;
-
 import com.nbc.trello.board.service.BoardService;
 import com.nbc.trello.column.dto.ColumnsOrderRequestDto;
 import com.nbc.trello.column.dto.ColumnsRequestDto;
 import com.nbc.trello.column.dto.ColumnsResponseDto;
 import com.nbc.trello.column.service.ColumnsService;
 import com.nbc.trello.global.response.ApiResponse;
-import com.nbc.trello.global.exception.ApiException;
-import com.nbc.trello.users.User;
-import com.nbc.trello.users.UserDetailsImpl;
+import com.nbc.trello.board.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -21,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;

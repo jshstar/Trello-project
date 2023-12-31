@@ -1,8 +1,8 @@
-package com.nbc.trello.comment;
+package com.nbc.trello.comment.entity;
 
 import com.nbc.trello.card.entity.Card;
 import com.nbc.trello.global.entity.BaseEntity;
-import com.nbc.trello.users.User;
+import com.nbc.trello.users.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -2,7 +2,7 @@ package com.nbc.trello;
 
 import com.nbc.trello.board.domain.Board;
 import com.nbc.trello.column.entity.Columns;
-import com.nbc.trello.users.User;
+import com.nbc.trello.users.entity.User;
 import net.bytebuddy.utility.RandomString;
 
 public class TestDataFactory {

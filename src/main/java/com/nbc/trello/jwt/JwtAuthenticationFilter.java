@@ -1,8 +1,8 @@
 package com.nbc.trello.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nbc.trello.users.UserDetailsImpl;
-import com.nbc.trello.users.UserRequestDTO;
+import com.nbc.trello.board.security.UserDetailsImpl;
+import com.nbc.trello.users.dto.request.UserRequestDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +28,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(
             HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            UserRequestDTO requestDto =
-                    objectMapper.readValue(request.getInputStream(), UserRequestDTO.class);
+            UserRequestDto requestDto =
+                    objectMapper.readValue(request.getInputStream(), UserRequestDto.class);
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(

@@ -1,4 +1,4 @@
-package com.nbc.trello.users;
+package com.nbc.trello.users.entity;
 
 import com.nbc.trello.board.domain.Board;
 import com.nbc.trello.board.domain.BoardUser;
