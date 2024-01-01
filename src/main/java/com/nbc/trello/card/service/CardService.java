@@ -58,7 +58,7 @@ public class CardService {
 		boardService.checkAuthorization(saveUser, boardId);
 		Columns columns = columnsRepository.findById(columnId)
 			.orElseThrow(() -> new ApiException(COLUMNS_NOT_FOUND_EXCEPTION));
-		Double maxWeight = findMaxWeightAndCheckNull(columnId)+1.0;
+		Double maxWeight = findMaxWeightAndCheckNull(columnId) + 1;
 		Card card = new Card(cardRequestDto, maxWeight);
 		card.addColumn(columns);
 		card.createWorker(saveUser);
@@ -132,12 +132,12 @@ public class CardService {
 
 	// 칼럼에 카드 있는지 체크후 동작 실행
 	public Card ChecklistAndRunCardAction(Long columnId, Long cardId, MoveCardRequestDto moveCardRequestDto){
-		List<Card> cardList = cardRepository.findWeightCardList(moveCardRequestDto.getColumnsPosition());
+		List<Card> cardList = cardRepository.findWeightCardList(moveCardRequestDto.getColumnsPosition()+1);
 		Card card = cardRepository.findCard(columnId, cardId)
 			.orElseThrow(() -> new ApiException(INVALID_CARD));
 
 		if (cardList.isEmpty()) {
-			Columns columns = columnsRepository.findById(moveCardRequestDto.getColumnsPosition())
+			Columns columns = columnsRepository.findById(moveCardRequestDto.getColumnsPosition()+1)
 				.orElseThrow(() -> new ApiException(COLUMNS_NOT_FOUND_EXCEPTION));
 			card.addColumn(columns);
 			card.updateCardWeight(1.0);
@@ -160,26 +160,26 @@ public class CardService {
 		Long currentCardID = card.getId();
 		boolean moveCardUnderCheck = currentCardPositionCompareMovePosition(currentCardID, moveCardPosition, cardList);
 
-		if (moveCardPosition == 1) { // 옮기려는 카드 위치가 첫번째 일때
+		if (moveCardPosition == 0) { // 옮기려는 카드 위치가 첫번째 일때
 
 			Card nextCard = cardList.get(0);
 			calculateWeight = nextCard.getWeight() / 2;
 
-		} else if (moveCardPosition >= cardList.size()) { // 옮기려는 카드 위치가 마지막 일때
+		} else if (moveCardPosition >= cardList.size()-1) { // 옮기려는 카드 위치가 마지막 일때
 
 			Double moveColumnMaxWeight = cardList.get(cardList.size() - 1).getWeight();
-			calculateWeight = moveColumnMaxWeight+1;
+			calculateWeight = moveColumnMaxWeight + 1;
 
 		} else { // 그 외 경우
 			if(moveCardUnderCheck)
 			{
-				calculateWeight = (cardList.get(moveCardPosition.intValue() -1).getWeight() +
-					cardList.get(moveCardPosition.intValue()).getWeight())/2;
+				calculateWeight = (cardList.get(moveCardPosition.intValue()).getWeight() +
+					cardList.get(moveCardPosition.intValue()).getWeight() + 1)/2;
 
 			} else {
 
-				calculateWeight = (cardList.get(moveCardPosition.intValue() - 2).getWeight()
-					+ cardList.get(moveCardPosition.intValue()-1).getWeight()) / 2;
+				calculateWeight = (cardList.get(moveCardPosition.intValue() - 1).getWeight()
+					+ cardList.get(moveCardPosition.intValue()).getWeight()) / 2;
 
 			}
 
@@ -193,9 +193,9 @@ public class CardService {
 	// 동일 칼럼 안에 있는 카드의 위치가 옮기려는 카드의 위치보다 작은경우 체크
 	private boolean currentCardPositionCompareMovePosition(Long currentCardId, Long moveCardPosition, List<Card> cardList){
 		boolean moveCardUnderCheck = false;
-		for (Card value : cardList) {
-			if (Objects.equals(currentCardId, value.getId())) {
-				if (currentCardId < moveCardPosition - 1) {
+		for (int i = 0; i < cardList.size(); i++) {
+			if (Objects.equals(currentCardId, cardList.get(i).getId())) {
+				if ( i < moveCardPosition) {
 					moveCardUnderCheck = true;
 					break;
 				}
