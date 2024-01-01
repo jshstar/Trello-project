@@ -40,13 +40,14 @@ public class UserService {
         User savedUser = userRepository.save(user);
         String beforePassword = requestDTO.getBeforePassword();
         String afterPassword = requestDTO.getAfterPassword();
-        if (!beforePassword.equals(afterPassword)) {
+        if (beforePassword.equals(afterPassword)) {
             throw new ApiException(ErrorCode.EQUAL_PASSWORD);
         }
 
         if (!passwordEncoder.matches(beforePassword, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호 불일치");
         } else {
+            afterPassword = passwordEncoder.encode(afterPassword);
             savedUser.setPassword(afterPassword);
         }
     }
