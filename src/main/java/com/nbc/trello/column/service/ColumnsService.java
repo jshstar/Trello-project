@@ -90,7 +90,7 @@ public class ColumnsService {
             if(moveColumnsUnderCheck) {
                 weight = (columnList.get(moveIndex).getWeight() + columnList.get(moveIndex + 1).getWeight()) / 2;
             } else {
-                weight = (columnList.get(moveIndex).getWeight() + columnList.get(moveIndex - 1).getWeight()) / 2;
+                weight = (columnList.get(moveIndex).getWeight()  + columnList.get(moveIndex - 1).getWeight()) / 2;
             }
         }
         columns.updateWeight(weight);
@@ -101,9 +101,9 @@ public class ColumnsService {
     // 옮기려는 칼럼의 위치가 현재 칼럼위치보다 큰경우
     public boolean currentColumnsPositionCompareMovePosition(Long columnsId, Long moveIndex, List<Columns> columnsList){
         boolean moveColumnsUnderCheck = false;
-        for (Columns value : columnsList) {
-            if (Objects.equals(columnsId, value.getId())) {
-                if (columnsId < moveIndex ) {
+        for (int i = 0; i < columnsList.size(); i++) {
+            if (Objects.equals(columnsId, columnsList.get(i).getId())) {
+                if (i < moveIndex ) {
                     moveColumnsUnderCheck = true;
                     break;
                 }
