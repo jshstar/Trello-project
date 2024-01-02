@@ -1,5 +1,6 @@
-package com.nbc.trello.global.dto;
+package com.nbc.trello.global.response;
 
+import com.nbc.trello.global.dto.EmptyObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,10 @@ public class ApiResponse<T> {
 
     public static <K> ApiResponse<K> of(Integer status, String message, K data) {
         return new ApiResponse<>(status, message, data);
+    }
+
+    public static  ApiResponse<EmptyObject> of(Integer status, String message) {
+        EmptyObject emptyObject = EmptyObject.get();
+        return new ApiResponse<>(status, message, emptyObject);
     }
 }

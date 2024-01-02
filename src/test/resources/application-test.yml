@@ -1,33 +1,25 @@
 
 spring:
-  profiles:
-    active: dev
-
----
-
-spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: test
   data:
     redis:
       host: localhost
       port: 6379
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.h2.Driver
     username: ${db_username}
     password: ${db_password}
-    url: jdbc:mysql://localhost:3306/trello
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+#    url: jdbc:mysql://localhost:3306/trello
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
         format_sql: true
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
 
 jwt:
   secret:
