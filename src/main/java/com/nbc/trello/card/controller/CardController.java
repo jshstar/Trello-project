@@ -26,6 +26,7 @@ import com.nbc.trello.card.service.CardService;
 import com.nbc.trello.global.response.ApiResponse;
 import com.nbc.trello.board.security.UserDetailsImpl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -51,7 +52,7 @@ public class CardController {
 	public ResponseEntity<ApiResponse<UpdateCardResponseDto>> updateCard(@PathVariable Long boardId,
 		@PathVariable Long columnId,
 		@PathVariable Long cardId,
-		@RequestBody CardUpdateRequestDto cardUpdateRequestDto,
+		@Valid @RequestBody CardUpdateRequestDto cardUpdateRequestDto,
 		@AuthenticationPrincipal UserDetailsImpl userDetails){
 		UpdateCardResponseDto updateCardResponseDto = cardService.updateCard(boardId, columnId, cardId, cardUpdateRequestDto, userDetails.getUser());
 		return ResponseEntity.status(HttpStatus.OK)

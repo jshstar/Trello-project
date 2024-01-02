@@ -14,6 +14,8 @@ public class UpdateCardResponseDto {
 
 	private final String colors;
 
+	private final LocalDateTime deadline;
+
 	private final LocalDateTime modifiedAt;
 
 
@@ -21,6 +23,7 @@ public class UpdateCardResponseDto {
 		this.title = card.getTitles();
 		this.description = card.getDescription();
 		this.colors = card.getColors();
+		this.deadline =
 		this.modifiedAt = card.getModifiedAt();
 	}
 }
