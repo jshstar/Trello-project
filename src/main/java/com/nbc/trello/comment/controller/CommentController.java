@@ -3,6 +3,7 @@ package com.nbc.trello.comment.controller;
 import com.nbc.trello.board.service.BoardService;
 import com.nbc.trello.comment.dto.request.CommentRequestDto;
 import com.nbc.trello.comment.dto.response.CommentResponseDto;
+import com.nbc.trello.comment.entity.Comment;
 import com.nbc.trello.comment.service.CommentService;
 import com.nbc.trello.global.response.ApiResponse;
 import com.nbc.trello.board.security.UserDetailsImpl;
@@ -22,32 +23,32 @@ public class CommentController {
     private final CommentService commentService;
     private final BoardService boardService;
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> createComment(
+    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long boardId,
         @PathVariable Long cardId,
         @RequestBody CommentRequestDto commentRequestDto
     ) {
         boardService.checkAuthorization(userDetails.getUser(), boardId);
-        commentService.createComment(userDetails, cardId, commentRequestDto);
+        CommentResponseDto commentResponseDto = commentService.createComment(userDetails, cardId, commentRequestDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.of(HttpStatus.CREATED.value(), "success", null));
+                .body(ApiResponse.of(HttpStatus.CREATED.value(), "댓글 생성 성공",  commentResponseDto));
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<ApiResponse<Void>> updateComment(
+    public ResponseEntity<ApiResponse<CommentResponseDto>> updateComment(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long boardId,
             @PathVariable Long commentId,
             @RequestBody CommentRequestDto commentRequestDto
     ) throws Exception {
         boardService.checkAuthorization(userDetails.getUser(), boardId);
-        commentService.updateComment(userDetails, commentId, commentRequestDto);
+        CommentResponseDto commentResponseDto = commentService.updateComment(userDetails, commentId, commentRequestDto);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.of(HttpStatus.OK.value(), "success", null));
+                .body(ApiResponse.of(HttpStatus.OK.value(), "댓글 수정 성공", commentResponseDto));
     }
 
     @DeleteMapping("/{commentId}")
@@ -61,7 +62,7 @@ public class CommentController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.of(HttpStatus.OK.value(), "success", null));
+                .body(ApiResponse.of(HttpStatus.OK.value(), "댓글 삭제 성공", null));
     }
 
     @GetMapping
@@ -75,6 +76,6 @@ public class CommentController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.of(HttpStatus.OK.value(), "success", commentResponseDto));
+                .body(ApiResponse.of(HttpStatus.OK.value(), "댓글 목록 조회 성공", commentResponseDto));
     }
 }
