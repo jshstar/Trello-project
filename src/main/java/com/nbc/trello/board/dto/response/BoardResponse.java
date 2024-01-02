@@ -1,8 +1,8 @@
-package com.nbc.trello.board.response;
+package com.nbc.trello.board.dto.response;
 
 import com.nbc.trello.board.domain.Board;
-import com.nbc.trello.column.dto.ColumnResponse;
-import com.nbc.trello.column.entity.Columns;
+import com.nbc.trello.column.dto.response.ColumnResponse;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

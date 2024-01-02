@@ -1,4 +1,4 @@
-package com.nbc.trello.column.dto;
+package com.nbc.trello.column.dto.response;
 
 import com.nbc.trello.card.dto.response.CardResponseDto;
 import com.nbc.trello.card.entity.Card;
@@ -12,11 +12,11 @@ import java.util.List;
 @Getter
 public class ColumnResponse {
 
-    private Long id;
-    private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
-    private List<CardResponseDto> cards = new ArrayList<>();
+    private final Long id;
+    private final String name;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime modifiedAt;
+    private final List<CardResponseDto> cards;
 
     public ColumnResponse(Columns columns) {
         this.id = columns.getId();

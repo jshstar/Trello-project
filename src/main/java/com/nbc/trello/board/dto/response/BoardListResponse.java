@@ -1,4 +1,4 @@
-package com.nbc.trello.board.response;
+package com.nbc.trello.board.dto.response;
 
 import com.nbc.trello.board.domain.Board;
 import lombok.AllArgsConstructor;

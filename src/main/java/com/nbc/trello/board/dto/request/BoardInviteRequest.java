@@ -1,4 +1,4 @@
-package com.nbc.trello.board.request;
+package com.nbc.trello.board.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

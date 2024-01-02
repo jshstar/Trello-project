@@ -1,4 +1,4 @@
-package com.nbc.trello.column.dto;
+package com.nbc.trello.column.dto.response;
 
 import com.nbc.trello.column.entity.Columns;
 import java.time.LocalDateTime;

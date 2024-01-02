@@ -1,9 +1,9 @@
 package com.nbc.trello.column.controller;
 
 import com.nbc.trello.board.service.BoardService;
-import com.nbc.trello.column.dto.ColumnsOrderRequestDto;
-import com.nbc.trello.column.dto.ColumnsRequestDto;
-import com.nbc.trello.column.dto.ColumnsResponseDto;
+import com.nbc.trello.column.dto.request.ColumnsOrderRequestDto;
+import com.nbc.trello.column.dto.request.ColumnsRequestDto;
+import com.nbc.trello.column.dto.response.ColumnsResponseDto;
 import com.nbc.trello.column.service.ColumnsService;
 import com.nbc.trello.global.response.ApiResponse;
 import com.nbc.trello.board.security.UserDetailsImpl;

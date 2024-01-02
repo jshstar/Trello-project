@@ -3,10 +3,9 @@ package com.nbc.trello.column.service;
 
 import com.nbc.trello.board.domain.Board;
 import com.nbc.trello.board.repository.BoardRepository;
-import com.nbc.trello.card.entity.Card;
-import com.nbc.trello.column.dto.ColumnsOrderRequestDto;
-import com.nbc.trello.column.dto.ColumnsRequestDto;
-import com.nbc.trello.column.dto.ColumnsResponseDto;
+import com.nbc.trello.column.dto.request.ColumnsOrderRequestDto;
+import com.nbc.trello.column.dto.request.ColumnsRequestDto;
+import com.nbc.trello.column.dto.response.ColumnsResponseDto;
 import com.nbc.trello.column.entity.Columns;
 import com.nbc.trello.column.repository.ColumnsRepository;
 import com.nbc.trello.global.exception.ApiException;
@@ -14,7 +13,6 @@ import com.nbc.trello.global.exception.ApiException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.nbc.trello.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
