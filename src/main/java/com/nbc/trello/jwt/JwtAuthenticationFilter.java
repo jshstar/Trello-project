@@ -1,7 +1,7 @@
 package com.nbc.trello.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nbc.trello.board.security.UserDetailsImpl;
+import com.nbc.trello.security.UserDetailsImpl;
 import com.nbc.trello.users.dto.request.UserRequestDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

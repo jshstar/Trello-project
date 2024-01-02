@@ -1,4 +1,4 @@
-package com.nbc.trello.board.security;
+package com.nbc.trello.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

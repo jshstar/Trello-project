@@ -6,7 +6,7 @@ import com.nbc.trello.column.dto.request.ColumnsRequestDto;
 import com.nbc.trello.column.dto.response.ColumnsResponseDto;
 import com.nbc.trello.column.service.ColumnsService;
 import com.nbc.trello.global.response.ApiResponse;
-import com.nbc.trello.board.security.UserDetailsImpl;
+import com.nbc.trello.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 
 import java.util.List;

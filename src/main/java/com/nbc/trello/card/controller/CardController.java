@@ -24,7 +24,7 @@ import com.nbc.trello.card.dto.response.PageCardResponseDto;
 import com.nbc.trello.card.dto.response.UpdateCardResponseDto;
 import com.nbc.trello.card.service.CardService;
 import com.nbc.trello.global.response.ApiResponse;
-import com.nbc.trello.board.security.UserDetailsImpl;
+import com.nbc.trello.security.UserDetailsImpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

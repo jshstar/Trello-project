@@ -8,7 +8,7 @@ import com.nbc.trello.board.dto.response.BoardResponse;
 import com.nbc.trello.board.service.BoardService;
 import com.nbc.trello.global.dto.EmptyObject;
 import com.nbc.trello.global.response.ApiResponse;
-import com.nbc.trello.board.security.UserDetailsImpl;
+import com.nbc.trello.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
