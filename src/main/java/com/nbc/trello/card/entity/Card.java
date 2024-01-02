@@ -1,5 +1,6 @@
 package com.nbc.trello.card.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,8 @@ public class Card extends BaseEntity {
 	@OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments;
 
+	private LocalDateTime deadline;
+
 	// 가중치
 	private double weight;
 
@@ -75,6 +78,7 @@ public class Card extends BaseEntity {
 		this.colors = cardUpdateRequestDto.getColor();
 		this.description = cardUpdateRequestDto.getDescription();
 		this.columns = columns;
+		this.deadline = cardUpdateRequestDto.getDeadline();
 	}
 
 	public void updateCardWeight(double weight){

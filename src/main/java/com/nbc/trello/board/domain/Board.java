@@ -1,7 +1,7 @@
 package com.nbc.trello.board.domain;
 
-import com.nbc.trello.board.request.BoardCreateRequest;
-import com.nbc.trello.board.request.BoardUpdateRequest;
+import com.nbc.trello.board.dto.request.BoardCreateRequest;
+import com.nbc.trello.board.dto.request.BoardUpdateRequest;
 import com.nbc.trello.column.entity.Columns;
 import com.nbc.trello.global.entity.BaseEntity;
 import com.nbc.trello.users.entity.User;

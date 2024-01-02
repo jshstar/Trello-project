@@ -1,10 +1,10 @@
 package com.nbc.trello.board.controller;
 
-import com.nbc.trello.board.request.BoardCreateRequest;
-import com.nbc.trello.board.request.BoardInviteRequest;
-import com.nbc.trello.board.request.BoardUpdateRequest;
-import com.nbc.trello.board.response.BoardListResponse;
-import com.nbc.trello.board.response.BoardResponse;
+import com.nbc.trello.board.dto.request.BoardCreateRequest;
+import com.nbc.trello.board.dto.request.BoardInviteRequest;
+import com.nbc.trello.board.dto.request.BoardUpdateRequest;
+import com.nbc.trello.board.dto.response.BoardListResponse;
+import com.nbc.trello.board.dto.response.BoardResponse;
 import com.nbc.trello.board.service.BoardService;
 import com.nbc.trello.global.dto.EmptyObject;
 import com.nbc.trello.global.response.ApiResponse;

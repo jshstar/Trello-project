@@ -1,4 +1,4 @@
-package com.nbc.trello.column.dto;
+package com.nbc.trello.column.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
