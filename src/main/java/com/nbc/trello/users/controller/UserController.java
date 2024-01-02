@@ -1,7 +1,7 @@
 package com.nbc.trello.users.controller;
 
 
-import com.nbc.trello.board.security.UserDetailsImpl;
+import com.nbc.trello.security.UserDetailsImpl;
 import com.nbc.trello.global.dto.EmptyObject;
 import com.nbc.trello.global.response.ApiResponse;
 import com.nbc.trello.jwt.JwtUtil;

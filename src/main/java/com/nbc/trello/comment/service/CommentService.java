@@ -15,7 +15,7 @@ import com.nbc.trello.comment.entity.Comment;
 import com.nbc.trello.global.exception.ApiException;
 import com.nbc.trello.global.exception.ErrorCode;
 import com.nbc.trello.users.entity.User;
-import com.nbc.trello.board.security.UserDetailsImpl;
+import com.nbc.trello.security.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 
