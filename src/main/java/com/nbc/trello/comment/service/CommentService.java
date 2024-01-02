@@ -26,16 +26,18 @@ public class CommentService {
 
     private final CardService cardService;
 
-    public void createComment(UserDetailsImpl userDetails, Long cardId, CommentRequestDto commentRequestDto) {
+    public CommentResponseDto createComment(UserDetailsImpl userDetails, Long cardId, CommentRequestDto commentRequestDto) {
         User user = userDetails.getUser();
         Card card = cardService.findCard(cardId);
         String content = commentRequestDto.getContent();
         Comment comment = new Comment(user, card, content);
         commentRepository.save(comment);
+        return new CommentResponseDto(comment);
+
     }
 
     @Transactional
-    public void updateComment(UserDetailsImpl userDetails, Long commentId, CommentRequestDto commentRequestDto) throws Exception {
+    public CommentResponseDto updateComment(UserDetailsImpl userDetails, Long commentId, CommentRequestDto commentRequestDto) throws Exception {
         User user = userDetails.getUser();
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
@@ -44,6 +46,7 @@ public class CommentService {
             throw new ApiException(ErrorCode.NOT_EQUAL_CREATE_USER);
         }
         comment.update(commentRequestDto.getContent());
+        return new CommentResponseDto(comment);
 
     }
 
