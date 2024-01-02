@@ -10,6 +10,7 @@ public enum ErrorCode {
     INVALID_USERNAME(404, "유저 이름이 올바르지 않습니다."),
     EQUAL_PASSWORD(400, "변경할 비밀번호와 기존 비밀번호가 같습니다."),
 	ALREADY_INVITE_USER(400, "이미 초대된 사용자 입니다."),
+    UNAUTHORIZED_USER(403, "권한이 없습니다."),
 
 	// 댓글
     NOT_EXIST_CARD(400, "카드가 존재하지 않습니다."),

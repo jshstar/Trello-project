@@ -52,4 +52,13 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public void deleteUser(User user, Long deleteUserId) {
+        if (!user.getId().equals(deleteUserId)) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED_USER);
+        }
+
+        userRepository.deleteById(deleteUserId);
+    }
+
 }

@@ -61,4 +61,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.of(HttpStatus.OK.value(), "비밀번호 변경 성공"));
     }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponse<EmptyObject>> deleteUser(
+            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        userService.deleteUser(userDetails.getUser(), userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
